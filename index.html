@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Elidio Baloi - Nutritionist & Public Health Professional</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              background: '#131313',
+              surface: '#131313',
+              'surface-container': '#201f1f',
+              'surface-container-low': '#1c1b1b',
+              'surface-container-lowest': '#0e0e0e',
+              'surface-container-high': '#2a2a2a',
+              'surface-container-highest': '#353534',
+              'outline-variant': '#3d4a3d',
+              primary: '#4be277',
+              'primary-fixed': '#6bff8f',
+              'on-primary': '#003915',
+              'on-surface': '#e5e2e1',
+              'on-surface-variant': '#bccbb9',
+              'on-background': '#e5e2e1',
+              secondary: '#adc6ff',
+              'on-secondary': '#002e6a',
+              tertiary: '#ffb5ab',
+              'on-tertiary': '#60130d',
+              error: '#ffb4ab',
+              'on-error': '#690005',
+            },
+            borderRadius: {
+              DEFAULT: '0.125rem',
+              lg: '0.25rem',
+              xl: '0.5rem',
+              full: '0.75rem',
+            },
+            spacing: {
+              base: '4px',
+              xl: '80px',
+              'margin-desktop': '64px',
+              md: '24px',
+              xs: '8px',
+              sm: '16px',
+              gutter: '24px',
+              'margin-mobile': '16px',
+              lg: '48px',
+            },
+            fontFamily: {
+              'label-sm': ['Geist'],
+              'headline-lg': ['Geist'],
+              'headline-lg-mobile': ['Geist'],
+              'body-md': ['Inter'],
+              'mono-data': ['Geist'],
+              'headline-xl': ['Geist'],
+            },
+            fontSize: {
+              'label-sm': ['12px', { lineHeight: '1', letterSpacing: '0.05em', fontWeight: '500' }],
+              'headline-lg': ['32px', { lineHeight: '1.2', letterSpacing: '-0.02em', fontWeight: '600' }],
+              'headline-lg-mobile': ['24px', { lineHeight: '1.2', letterSpacing: '-0.02em', fontWeight: '600' }],
+              'body-md': ['16px', { lineHeight: '1.6', letterSpacing: '0em', fontWeight: '400' }],
+              'mono-data': ['14px', { lineHeight: '1.4', letterSpacing: '0em', fontWeight: '400' }],
+              'headline-xl': ['48px', { lineHeight: '1.1', letterSpacing: '-0.04em', fontWeight: '600' }],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="bg-background text-on-background font-body-md text-body-md min-h-screen antialiased transition-colors duration-300">
+    <nav class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant w-full">
+      <div class="flex justify-between items-center w-full px-margin-desktop h-16 max-w-[1280px] mx-auto md:px-margin-desktop px-margin-mobile">
+        <div class="text-label-sm font-label-sm font-bold tracking-tighter text-on-surface uppercase">
+          ELIDIO BALOI
+        </div>
+        <div class="hidden md:flex gap-sm">
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#expertise">Expertise</a>
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#specialties">Specialties</a>
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#tools">Clinical Tools</a>
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#public-health">Public Health</a>
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#booking">Booking</a>
+        </div>
+        <div class="flex items-center gap-xs">
+          <button class="p-2 hover:bg-surface-container-highest/50 transition-colors duration-200 rounded text-on-surface-variant" id="theme-toggle" type="button" aria-label="Toggle theme">
+            <span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-xl space-y-xl">
+      <section class="hero-section relative flex flex-col md:flex-row items-center justify-between gap-lg py-xl border-b border-surface-container-highest overflow-hidden reveal">
+        <canvas id="shader-container"></canvas>
+        <div class="w-full md:w-2/3 space-y-md z-10" id="hero-content">
+          <div class="inline-flex items-center gap-2 px-3 py-1 border border-primary/30 bg-primary/10 rounded-sm">
+            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span class="text-label-sm font-label-sm text-primary uppercase">Accepting New Patients</span>
+          </div>
+          <h1 class="text-headline-lg-mobile font-headline-lg-mobile md:text-headline-xl md:font-headline-xl text-on-surface">
+            Bridging Clinical Science<br />and Human Wellness.
+          </h1>
+          <p class="text-body-md font-body-md text-on-surface-variant max-w-2xl">
+            Nutritionist &amp; Public Health Professional specializing in evidence-based dietary interventions, pediatric growth, and athletic performance optimization.
+          </p>
+          <div class="flex gap-4 pt-sm">
+            <a class="inline-flex items-center justify-center px-6 py-3 bg-primary text-on-primary text-label-sm font-label-sm uppercase font-bold hover:bg-primary-fixed transition-colors rounded-sm" href="#booking">
+              Book Consultation
+            </a>
+            <a class="inline-flex items-center justify-center px-6 py-3 border border-surface-container-highest text-on-surface text-label-sm font-label-sm uppercase font-bold hover:border-primary hover:text-primary transition-colors rounded-sm card-hover" href="#tools">
+              Clinical Tools
+            </a>
+          </div>
+        </div>
+        <div class="w-full md:w-1/3 aspect-square relative z-10" id="three-container"></div>
+      </section>
+
+      <section class="space-y-md reveal delay-100" id="specialties">
+        <div class="flex justify-between items-end border-b border-surface-container-highest pb-xs">
+          <h2 class="text-headline-lg font-headline-lg text-on-surface">Specialized Protocols</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+          <div class="bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden flex flex-col h-64">
+            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-10 transition-opacity"></div>
+            <span class="material-symbols-outlined text-primary mb-auto" style="font-variation-settings: 'FILL' 1;">directions_run</span>
+            <div>
+              <h3 class="text-label-sm font-label-sm uppercase text-on-surface mb-2">Athletic Performance</h3>
+              <p class="text-mono-data font-mono-data text-on-surface-variant">Macronutrient periodization and recovery nutrition for endurance and strength athletes.</p>
+            </div>
+          </div>
+
+          <div class="bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden flex flex-col h-64">
+            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-10 transition-opacity"></div>
+            <span class="material-symbols-outlined text-primary mb-auto" style="font-variation-settings: 'FILL' 1;">monitor_weight</span>
+            <div>
+              <h3 class="text-label-sm font-label-sm uppercase text-on-surface mb-2">Body Composition</h3>
+              <p class="text-mono-data font-mono-data text-on-surface-variant">Structured, sustainable leaning phases for aesthetic professionals and models.</p>
+            </div>
+          </div>
+
+          <div class="bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden flex flex-col h-64">
+            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-10 transition-opacity"></div>
+            <span class="material-symbols-outlined text-primary mb-auto" style="font-variation-settings: 'FILL' 1;">child_care</span>
+            <div>
+              <h3 class="text-label-sm font-label-sm uppercase text-on-surface mb-2">Pediatric Nutrition</h3>
+              <p class="text-mono-data font-mono-data text-on-surface-variant">Growth monitoring, micro-deficiency correction, and developmental dietary planning.</p>
+            </div>
+          </div>
+
+          <div class="bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden flex flex-col h-64">
+            <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-10 transition-opacity"></div>
+            <span class="material-symbols-outlined text-primary mb-auto" style="font-variation-settings: 'FILL' 1;">pregnant_woman</span>
+            <div>
+              <h3 class="text-label-sm font-label-sm uppercase text-on-surface mb-2">Reproductive Health</h3>
+              <p class="text-mono-data font-mono-data text-on-surface-variant">Gestational nutrition, PCOS management, and fertility-focused dietary interventions.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-surface-container-lowest border-t border-outline-variant w-full mt-xl reveal delay-200">
+      <div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-desktop py-md max-w-[1280px] mx-auto gap-md">
+        <div class="text-label-sm font-label-sm font-bold text-on-surface text-center md:text-left">
+          © 2024 Elidio Baloi. Nutritionist &amp; Public Health Professional. Registered Clinical Practice.
+        </div>
+        <div class="flex flex-wrap justify-center gap-sm">
+          <a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm uppercase" href="#">Privacy Policy</a>
+          <a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm uppercase" href="#">Terms of Service</a>
+          <a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm uppercase" href="#">Research Gate</a>
+          <a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm uppercase" href="#">ORCID</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
