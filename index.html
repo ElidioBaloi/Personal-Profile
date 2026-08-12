@@ -81,17 +81,32 @@
         <div class="text-label-sm font-label-sm font-bold tracking-tighter text-on-surface uppercase">
           ELIDIO BALOI
         </div>
-        <div class="hidden md:flex gap-sm">
+
+        <div class="hidden md:flex gap-sm desktop-nav" id="desktop-nav">
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#expertise">Expertise</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#specialties">Specialties</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#tools">Clinical Tools</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#public-health">Public Health</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#booking">Booking</a>
         </div>
+
         <div class="flex items-center gap-xs">
+          <button class="p-2 hover:bg-surface-container-highest/50 transition-colors duration-200 rounded text-on-surface-variant mobile-menu-toggle" id="mobile-menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobile-menu">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
           <button class="p-2 hover:bg-surface-container-highest/50 transition-colors duration-200 rounded text-on-surface-variant" id="theme-toggle" type="button" aria-label="Toggle theme">
             <span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
           </button>
+        </div>
+      </div>
+
+      <div class="mobile-menu hidden border-t border-outline-variant bg-surface/95" id="mobile-menu">
+        <div class="max-w-[1280px] mx-auto px-margin-mobile py-3 flex flex-col gap-3">
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#expertise">Expertise</a>
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#specialties">Specialties</a>
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#tools">Clinical Tools</a>
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#public-health">Public Health</a>
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#booking">Booking</a>
         </div>
       </div>
     </nav>
@@ -119,7 +134,11 @@
             </a>
           </div>
         </div>
-        <div class="w-full md:w-1/3 aspect-square relative z-10" id="three-container"></div>
+        <div class="w-full md:w-1/3 relative z-10 hero-portrait-wrap">
+          <div class="hero-portrait-frame">
+            <img src="Doctor B 2.png" alt="Doctor Elidio Baloi portrait" class="hero-portrait" />
+          </div>
+        </div>
       </section>
 
       <section class="space-y-md reveal delay-100" id="specialties">
@@ -127,36 +146,48 @@
           <h2 class="text-headline-lg font-headline-lg text-on-surface">Specialized Protocols</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
-          <div class="bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden flex flex-col h-64">
+          <div class="protocol-card bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden">
             <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-10 transition-opacity"></div>
-            <span class="material-symbols-outlined text-primary mb-auto" style="font-variation-settings: 'FILL' 1;">directions_run</span>
+            <div class="protocol-image">
+              <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80" alt="Athlete running outdoors" loading="lazy" />
+            </div>
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">directions_run</span>
             <div>
               <h3 class="text-label-sm font-label-sm uppercase text-on-surface mb-2">Athletic Performance</h3>
               <p class="text-mono-data font-mono-data text-on-surface-variant">Macronutrient periodization and recovery nutrition for endurance and strength athletes.</p>
             </div>
           </div>
 
-          <div class="bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden flex flex-col h-64">
+          <div class="protocol-card bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden">
             <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-10 transition-opacity"></div>
-            <span class="material-symbols-outlined text-primary mb-auto" style="font-variation-settings: 'FILL' 1;">monitor_weight</span>
+            <div class="protocol-image">
+              <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=900&q=80" alt="Electric bioimpedance body scan in a clinical setting" loading="lazy" />
+            </div>
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">monitor_weight</span>
             <div>
               <h3 class="text-label-sm font-label-sm uppercase text-on-surface mb-2">Body Composition</h3>
               <p class="text-mono-data font-mono-data text-on-surface-variant">Structured, sustainable leaning phases for aesthetic professionals and models.</p>
             </div>
           </div>
 
-          <div class="bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden flex flex-col h-64">
+          <div class="protocol-card bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden">
             <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-10 transition-opacity"></div>
-            <span class="material-symbols-outlined text-primary mb-auto" style="font-variation-settings: 'FILL' 1;">child_care</span>
+            <div class="protocol-image">
+              <img src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=900&q=80" alt="Happy child eating healthy food" loading="lazy" />
+            </div>
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">child_care</span>
             <div>
               <h3 class="text-label-sm font-label-sm uppercase text-on-surface mb-2">Pediatric Nutrition</h3>
               <p class="text-mono-data font-mono-data text-on-surface-variant">Growth monitoring, micro-deficiency correction, and developmental dietary planning.</p>
             </div>
           </div>
 
-          <div class="bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden flex flex-col h-64">
+          <div class="protocol-card bg-surface-container-lowest p-md card-border card-hover rounded-sm group relative overflow-hidden">
             <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-10 transition-opacity"></div>
-            <span class="material-symbols-outlined text-primary mb-auto" style="font-variation-settings: 'FILL' 1;">pregnant_woman</span>
+            <div class="protocol-image">
+              <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80" alt="Woman in wellness consultation" loading="lazy" />
+            </div>
+            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">pregnant_woman</span>
             <div>
               <h3 class="text-label-sm font-label-sm uppercase text-on-surface mb-2">Reproductive Health</h3>
               <p class="text-mono-data font-mono-data text-on-surface-variant">Gestational nutrition, PCOS management, and fertility-focused dietary interventions.</p>

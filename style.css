@@ -1,3 +1,11 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
 .shimmer {
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
   background-size: 200% 100%;
@@ -88,6 +96,113 @@ html:not(.dark) .shimmer {
   width: 100%;
   min-height: 320px;
   z-index: 1;
+}
+
+.hero-portrait-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-portrait-frame {
+  position: relative;
+  width: min(100%, 24rem);
+  aspect-ratio: 4 / 5;
+  border: 1px solid rgba(134, 149, 133, 0.6);
+  background: linear-gradient(180deg, rgba(75, 226, 119, 0.12), rgba(0, 0, 0, 0.05));
+  overflow: hidden;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.25);
+}
+
+.hero-portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.protocol-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-height: 22rem;
+}
+
+.protocol-image {
+  position: relative;
+  height: 9rem;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(134, 149, 133, 0.5);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.protocol-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.protocol-card:hover .protocol-image img {
+  transform: scale(1.04);
+}
+
+.mobile-menu-toggle {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-menu-toggle {
+    display: inline-flex;
+  }
+
+  .desktop-nav {
+    display: none !important;
+  }
+
+  .mobile-menu {
+    display: none;
+  }
+
+  .mobile-menu.is-open {
+    display: block;
+  }
+
+  .hero-section {
+    padding-top: 1.25rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .hero-section > div:first-of-type,
+  .hero-section > div:last-of-type {
+    width: 100%;
+  }
+
+  .hero-section h1 {
+    font-size: clamp(2.1rem, 8vw, 3.25rem);
+    line-height: 1.05;
+  }
+
+  .hero-section .flex.gap-4 {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-section .flex.gap-4 a {
+    width: 100%;
+  }
+
+  .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+
+  footer .flex {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 
 @media (min-width: 768px) {

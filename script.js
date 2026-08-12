@@ -13,6 +13,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  if (mobileMenuToggle && mobileMenu) {
+    const closeMenu = () => {
+      mobileMenu.classList.remove('is-open');
+      mobileMenuToggle.setAttribute('aria-expanded', 'false');
+      mobileMenuToggle.querySelector('.material-symbols-outlined').textContent = 'menu';
+    };
+
+    const openMenu = () => {
+      mobileMenu.classList.add('is-open');
+      mobileMenuToggle.setAttribute('aria-expanded', 'true');
+      mobileMenuToggle.querySelector('.material-symbols-outlined').textContent = 'close';
+    };
+
+    mobileMenuToggle.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.contains('is-open');
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    mobileMenu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) {
+        closeMenu();
+      }
+    });
+  }
+
   const shaderCanvas = document.getElementById('shader-container');
   if (shaderCanvas) {
     const gl = shaderCanvas.getContext('webgl');
