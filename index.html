@@ -85,7 +85,16 @@
         <div class="hidden md:flex gap-sm desktop-nav" id="desktop-nav">
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#expertise">Expertise</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#specialties">Specialties</a>
-          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#tools">Clinical Tools</a>
+          <div class="tools-nav-dropdown" id="desktop-tools-dropdown">
+            <button class="tools-nav-trigger" type="button" aria-expanded="false" aria-controls="desktop-tools-menu">Clinical Tools <span class="material-symbols-outlined" aria-hidden="true">expand_more</span></button>
+            <div class="tools-nav-menu" id="desktop-tools-menu" role="menu">
+              <button type="button" role="menuitem" data-tool="athletic">🏋️ Athletic: Macro Periodization</button>
+              <button type="button" role="menuitem" data-tool="body-composition">⚖️ Body Comp: Dual BMI &amp; FFMI Calculator</button>
+              <button type="button" role="menuitem" data-tool="pediatric">👶 Pediatric: Growth Z-Score Estimator</button>
+              <button type="button" role="menuitem" data-tool="reproductive">🤰 Reproductive Health: Gestational Weight &amp; PCOS Tool</button>
+              <button type="button" role="menuitem" data-tool="general">⚡ General: BMR &amp; TDEE Estimator</button>
+            </div>
+          </div>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#public-health">Public Health</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors booking-trigger" href="#booking">Booking</a>
           <a class="text-primary hover:text-primary-fixed text-label-sm font-label-sm uppercase transition-colors" href="#admin">Admin Portal</a>
@@ -105,7 +114,16 @@
         <div class="max-w-[1280px] mx-auto px-margin-mobile py-3 flex flex-col gap-3">
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#expertise">Expertise</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#specialties">Specialties</a>
-          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#tools">Clinical Tools</a>
+          <div class="mobile-tools-dropdown" id="mobile-tools-dropdown">
+            <button class="mobile-tools-trigger" type="button" aria-expanded="false" aria-controls="mobile-tools-menu">Clinical Tools <span class="material-symbols-outlined" aria-hidden="true">expand_more</span></button>
+            <div class="mobile-tools-menu" id="mobile-tools-menu" role="menu">
+              <button type="button" role="menuitem" data-tool="athletic">🏋️ Athletic: Macro Periodization</button>
+              <button type="button" role="menuitem" data-tool="body-composition">⚖️ Body Comp: Dual BMI &amp; FFMI Calculator</button>
+              <button type="button" role="menuitem" data-tool="pediatric">👶 Pediatric: Growth Z-Score Estimator</button>
+              <button type="button" role="menuitem" data-tool="reproductive">🤰 Reproductive Health: Gestational Weight &amp; PCOS Tool</button>
+              <button type="button" role="menuitem" data-tool="general">⚡ General: BMR &amp; TDEE Estimator</button>
+            </div>
+          </div>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#public-health">Public Health</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors booking-trigger" href="#booking">Booking</a>
           <a class="text-primary hover:text-primary-fixed text-label-sm font-label-sm uppercase transition-colors" href="#admin">Admin Portal</a>
@@ -414,6 +432,16 @@
           <button class="booking-secondary" type="button" id="admin-print-receipt">Print Patient Receipt</button>
           <button class="admin-delete-button" type="button" id="admin-delete-booking">Delete Entry</button>
         </div>
+      </section>
+    </div>
+
+    <div class="calculator-modal" id="calculator-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="calculator-title">
+      <div class="calculator-backdrop" data-calculator-close></div>
+      <section class="calculator-card">
+        <button class="booking-close" type="button" aria-label="Close calculator" data-calculator-close><span class="material-symbols-outlined">close</span></button>
+        <div class="booking-eyebrow">Clinical tools</div>
+        <h2 id="calculator-title">Calculator</h2>
+        <div id="calculator-content"></div>
       </section>
     </div>
 

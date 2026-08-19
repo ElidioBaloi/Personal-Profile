@@ -49,6 +49,84 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const calculatorModal = document.getElementById('calculator-modal');
+  const calculatorTitle = document.getElementById('calculator-title');
+  const calculatorContent = document.getElementById('calculator-content');
+  const calculatorMenus = document.querySelectorAll('.tools-nav-dropdown, .mobile-tools-dropdown');
+
+  if (calculatorModal && calculatorTitle && calculatorContent) {
+    const calculatorTemplates = {
+      athletic: {
+        title: 'Athletic Macro Periodization',
+        fields: `<label class="booking-field"><span>Body Weight <b>*</b></span><input type="number" name="weight" min="1" step="0.1" required /><small>kg</small></label><label class="booking-field"><span>Training Day <b>*</b></span><select name="training" required><option value="">Select target</option><option value="rest">Rest</option><option value="moderate">Moderate training</option><option value="heavy">Heavy training</option></select></label>`,
+        calculate: (data) => { const targets = { rest: [1.6, 2.5, 1.0], moderate: [1.7, 4, 1.0], heavy: [1.8, 5.5, 1.1] }; const [protein, carbs, fat] = targets[data.training]; return `<h3>Daily target</h3><p><strong>${(data.weight * protein).toFixed(0)} g</strong> protein</p><p><strong>${(data.weight * carbs).toFixed(0)} g</strong> carbohydrates</p><p><strong>${(data.weight * fat).toFixed(0)} g</strong> fat</p>`; },
+      },
+      'body-composition': {
+        title: 'Dual BMI & FFMI Calculator',
+        fields: `<label class="booking-field"><span>Weight <b>*</b></span><input type="number" name="weight" min="1" step="0.1" required /><small>kg</small></label><label class="booking-field"><span>Height <b>*</b></span><input type="number" name="height" min="50" step="0.1" required /><small>cm</small></label><label class="booking-field booking-field-wide"><span>Body Fat Percentage (optional)</span><input type="number" name="bodyFat" min="1" max="70" step="0.1" /><small>%</small></label>`,
+        calculate: (data) => { const bmi = data.weight / ((data.height / 100) ** 2); const category = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Healthy range' : bmi < 30 ? 'Overweight' : 'Obesity range'; const ffmi = data.bodyFat ? (data.weight * (1 - data.bodyFat / 100)) / ((data.height / 100) ** 2) : null; return `<h3>Composition snapshot</h3><p>BMI: <strong>${bmi.toFixed(1)}</strong> (${category})</p><p>${ffmi ? `Estimated FFMI: <strong>${ffmi.toFixed(1)}</strong>. This is a screening estimate; muscle quality and distribution require clinical assessment.` : 'Add body fat percentage to estimate FFMI and lean mass.'}</p>`; },
+      },
+      pediatric: {
+        title: 'Pediatric Growth Z-Score Estimator',
+        fields: `<label class="booking-field"><span>Age <b>*</b></span><input type="number" name="ageMonths" min="1" max="228" required /><small>months</small></label><label class="booking-field"><span>Sex <b>*</b></span><select name="sex" required><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></label><label class="booking-field"><span>Height <b>*</b></span><input type="number" name="height" min="40" step="0.1" required /><small>cm</small></label><label class="booking-field"><span>Weight <b>*</b></span><input type="number" name="weight" min="1" step="0.1" required /><small>kg</small></label>`,
+        calculate: (data) => { const age = data.ageMonths; const sexOffset = data.sex === 'male' ? 1 : 0; const medianHeight = 50 + age * 0.55 + sexOffset; const medianWeight = 3.3 + age * 0.22 + sexOffset * 0.15; const heightZ = (data.height - medianHeight) / (age < 24 ? 4 : 7); const weightZ = (data.weight - medianWeight) / (age < 24 ? 1.5 : 3); return `<h3>Estimated growth position</h3><p>Height-for-age estimate: <strong>${heightZ.toFixed(2)} SD</strong></p><p>Weight-for-age estimate: <strong>${weightZ.toFixed(2)} SD</strong></p><p>This simplified estimator is for screening only. Use WHO growth standards and a qualified pediatric clinician for interpretation.</p>`; },
+      },
+      reproductive: {
+        title: 'Reproductive Health Tool',
+        fields: `<label class="booking-field booking-field-wide"><span>Select Protocol <b>*</b></span><select name="protocol" id="reproductive-protocol" required><option value="">Select protocol</option><option value="gestational">Gestational Weight Target</option><option value="pcos">PCOS Glycemic Threshold</option></select></label><label class="booking-field"><span>Pre-pregnancy / Current Weight <b>*</b></span><input type="number" name="weight" min="1" step="0.1" required /><small>kg</small></label><label class="booking-field"><span>Height <b>*</b></span><input type="number" name="height" min="50" step="0.1" required /><small>cm</small></label><label class="booking-field reproductive-trimester"><span>Trimester <b>*</b></span><select name="trimester"><option value="1">1st</option><option value="2">2nd</option><option value="3">3rd</option></select></label>`,
+        calculate: (data) => { const bmi = data.weight / ((data.height / 100) ** 2); if (data.protocol === 'pcos') { const carbs = bmi >= 30 ? 30 : bmi >= 25 ? 40 : 45; return `<h3>PCOS meal target</h3><p>Suggested carbohydrate distribution: <strong>${carbs} g per meal</strong>, adjusted across 3 meals.</p><p>Pair carbohydrates with protein, fiber, and unsaturated fats. This is educational guidance, not a substitute for individualized medical care.</p>`; } const category = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal BMI' : bmi < 30 ? 'Overweight' : 'Obesity'; const ranges = { 'Underweight': ['12.5', '18', '0.45'], 'Normal BMI': ['11.5', '16', '0.4'], 'Overweight': ['7', '11.5', '0.3'], 'Obesity': ['5', '9', '0.25'] }; const [low, high, weekly] = ranges[category]; return `<h3>Gestational target</h3><p>Pre-pregnancy BMI category: <strong>${category}</strong> (${bmi.toFixed(1)})</p><p>Total recommended gain: <strong>${low} - ${high} kg</strong></p><p>Second/third trimester weekly rate: <strong>about ${weekly} kg/week</strong></p>`; },
+      },
+      general: {
+        title: 'BMR & TDEE Estimator',
+        fields: `<label class="booking-field"><span>Sex <b>*</b></span><select name="sex" required><option value="">Select</option><option value="male">Male</option><option value="female">Female</option></select></label><label class="booking-field"><span>Age <b>*</b></span><input type="number" name="age" min="13" max="120" required /><small>years</small></label><label class="booking-field"><span>Weight <b>*</b></span><input type="number" name="weight" min="1" step="0.1" required /><small>kg</small></label><label class="booking-field"><span>Height <b>*</b></span><input type="number" name="height" min="50" step="0.1" required /><small>cm</small></label><label class="booking-field booking-field-wide"><span>Activity Level <b>*</b></span><select name="activity" required><option value="">Select</option><option value="1.2">Sedentary</option><option value="1.375">Lightly active</option><option value="1.55">Moderately active</option><option value="1.725">Very active</option><option value="1.9">Extra active</option></select></label>`,
+        calculate: (data) => { const bmr = (10 * data.weight) + (6.25 * data.height) - (5 * data.age) + (data.sex === 'male' ? 5 : -161); return `<h3>Energy estimate</h3><p>BMR: <strong>${Math.round(bmr)} kcal/day</strong></p><p>TDEE: <strong>${Math.round(bmr * data.activity)} kcal/day</strong></p>`; },
+      },
+    };
+
+    const closeCalculator = () => {
+      calculatorModal.classList.remove('is-open');
+      calculatorModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('calculator-is-open');
+    };
+
+    const openCalculator = (toolName) => {
+      const template = calculatorTemplates[toolName];
+      if (!template) return;
+      calculatorTitle.textContent = template.title;
+      calculatorContent.innerHTML = `<form class="calculator-form" id="calculator-form">${template.fields}</form><div class="calculator-output" id="calculator-output"><p>Enter your details to see an estimate.</p></div><div class="calculator-actions"><button class="booking-submit" type="submit" form="calculator-form">Calculate</button><button class="booking-secondary" type="reset" form="calculator-form">Reset</button></div>`;
+      const form = document.getElementById('calculator-form');
+      const output = document.getElementById('calculator-output');
+      form.addEventListener('submit', (event) => { event.preventDefault(); if (!form.checkValidity()) { form.reportValidity(); return; } output.innerHTML = template.calculate(Object.fromEntries(new FormData(form).entries())); });
+      form.addEventListener('reset', () => { window.setTimeout(() => { output.innerHTML = '<p>Enter your details to see an estimate.</p>'; }, 0); });
+      const reproductiveProtocol = document.getElementById('reproductive-protocol');
+      if (reproductiveProtocol) reproductiveProtocol.addEventListener('change', () => { document.querySelector('.reproductive-trimester').hidden = reproductiveProtocol.value === 'pcos'; });
+      calculatorModal.classList.add('is-open');
+      calculatorModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('calculator-is-open');
+      window.setTimeout(() => form.querySelector('input, select')?.focus(), 100);
+    };
+
+    calculatorMenus.forEach((menu) => {
+      const trigger = menu.querySelector('button:not([data-tool])');
+      trigger.addEventListener('click', () => { const isOpen = menu.classList.toggle('is-open'); trigger.setAttribute('aria-expanded', String(isOpen)); });
+      menu.querySelectorAll('[data-tool]').forEach((item) => item.addEventListener('click', () => {
+        calculatorMenus.forEach((other) => other.classList.remove('is-open'));
+        if (mobileMenu?.classList.contains('is-open')) {
+          mobileMenu.classList.remove('is-open');
+          if (mobileMenuToggle) {
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            const mobileMenuIcon = mobileMenuToggle.querySelector('.material-symbols-outlined');
+            if (mobileMenuIcon) mobileMenuIcon.textContent = 'menu';
+          }
+        }
+        openCalculator(item.dataset.tool);
+      }));
+    });
+    calculatorModal.querySelectorAll('[data-calculator-close]').forEach((control) => control.addEventListener('click', closeCalculator));
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeCalculator(); calculatorMenus.forEach((menu) => menu.classList.remove('is-open')); } });
+    document.addEventListener('click', (event) => { calculatorMenus.forEach((menu) => { if (!menu.contains(event.target)) menu.classList.remove('is-open'); }); });
+  }
+
   const bookingModal = document.getElementById('booking-modal');
   const bookingForm = document.getElementById('booking-form');
   const bookingFormView = document.getElementById('booking-form-view');
