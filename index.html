@@ -87,7 +87,7 @@
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#specialties">Specialties</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#tools">Clinical Tools</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#public-health">Public Health</a>
-          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#booking">Booking</a>
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors booking-trigger" href="#booking">Booking</a>
         </div>
 
         <div class="flex items-center gap-xs">
@@ -106,7 +106,7 @@
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#specialties">Specialties</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#tools">Clinical Tools</a>
           <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#public-health">Public Health</a>
-          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors" href="#booking">Booking</a>
+          <a class="text-on-surface-variant hover:text-on-surface text-label-sm font-label-sm uppercase transition-colors booking-trigger" href="#booking">Booking</a>
         </div>
       </div>
     </nav>
@@ -126,7 +126,7 @@
             Nutritionist &amp; Public Health Professional specializing in evidence-based dietary interventions, pediatric growth, and athletic performance optimization.
           </p>
           <div class="flex gap-4 pt-sm">
-            <a class="inline-flex items-center justify-center px-6 py-3 bg-primary text-on-primary text-label-sm font-label-sm uppercase font-bold hover:bg-primary-fixed transition-colors rounded-sm" href="#booking">
+            <a class="inline-flex items-center justify-center px-6 py-3 bg-primary text-on-primary text-label-sm font-label-sm uppercase font-bold hover:bg-primary-fixed transition-colors rounded-sm booking-trigger" href="#booking">
               Book Consultation
             </a>
             <a class="inline-flex items-center justify-center px-6 py-3 border border-surface-container-highest text-on-surface text-label-sm font-label-sm uppercase font-bold hover:border-primary hover:text-primary transition-colors rounded-sm card-hover" href="#tools">
@@ -235,6 +235,117 @@
       </button>
     </div>
 
+    <div class="booking-modal" id="booking-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="booking-title">
+      <div class="booking-modal-backdrop" data-booking-close></div>
+      <section class="booking-card" role="document">
+        <button class="booking-close" type="button" aria-label="Close booking form" data-booking-close>
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+        <div id="booking-form-view">
+          <div class="booking-eyebrow">Clinical intake</div>
+          <h2 id="booking-title">Book a Consultation</h2>
+          <p class="booking-intro">Share a few details so the right consultation can be prepared for you.</p>
+          <form id="booking-form" novalidate>
+            <div class="booking-form-grid">
+              <label class="booking-field">
+                <span>Full Name <b>*</b></span>
+                <input type="text" name="fullName" autocomplete="name" required />
+              </label>
+              <label class="booking-field">
+                <span>Email Address <b>*</b></span>
+                <input type="email" name="email" autocomplete="email" required />
+              </label>
+              <label class="booking-field">
+                <span>Phone Number <b>*</b></span>
+                <input type="tel" name="phone" autocomplete="tel" required />
+              </label>
+              <label class="booking-field">
+                <span>Age <b>*</b></span>
+                <input type="number" name="age" min="1" max="120" required />
+              </label>
+              <label class="booking-field">
+                <span>Biological Sex <b>*</b></span>
+                <select name="sex" required>
+                  <option value="">Select an option</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Prefer not to say</option>
+                </select>
+              </label>
+              <label class="booking-field">
+                <span>Occupation <b>*</b></span>
+                <input type="text" name="occupation" required />
+              </label>
+              <label class="booking-field booking-field-wide">
+                <span>Specialty Focus <b>*</b></span>
+                <select name="specialty" id="specialty" required>
+                  <option value="">Select a specialty</option>
+                  <option>Athletic Performance</option>
+                  <option>Body Composition</option>
+                  <option>Pediatric Nutrition</option>
+                  <option>Reproductive Health</option>
+                  <option>General Nutrition</option>
+                </select>
+              </label>
+              <div class="pediatric-fields booking-field-wide" id="pediatric-fields" hidden>
+                <label class="booking-field">
+                  <span>Child's Age <b>*</b></span>
+                  <input type="number" name="childAge" min="0" max="18" />
+                </label>
+                <label class="booking-field">
+                  <span>Parent/Guardian Name <b>*</b></span>
+                  <input type="text" name="guardianName" />
+                </label>
+              </div>
+              <label class="booking-field">
+                <span>Preferred Date <b>*</b></span>
+                <input type="date" name="preferredDate" id="preferred-date" required />
+              </label>
+              <label class="booking-field">
+                <span>Time Slot <b>*</b></span>
+                <select name="timeSlot" required>
+                  <option value="">Select a time</option>
+                  <option>09:00 - 10:00</option>
+                  <option>11:00 - 12:00</option>
+                  <option>14:00 - 15:00</option>
+                  <option>16:00 - 17:00</option>
+                </select>
+              </label>
+              <fieldset class="booking-field booking-field-wide">
+                <legend>Format <b>*</b></legend>
+                <div class="booking-radio-group">
+                  <label><input type="radio" name="format" value="Virtual Consultation" required /> <span>Virtual Consultation</span></label>
+                  <label><input type="radio" name="format" value="In-Person Visit" /> <span>In-Person Visit</span></label>
+                </div>
+              </fieldset>
+              <label class="booking-field booking-field-wide">
+                <span>Main health goals or dietary requirements</span>
+                <textarea name="notes" rows="4" placeholder="Optional"></textarea>
+              </label>
+            </div>
+            <p class="booking-error" id="booking-error" role="alert" aria-live="polite"></p>
+            <button class="booking-submit" type="submit">Request Consultation <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button>
+            <p class="booking-email-note">You will receive a confirmation email with your booking reference.</p>
+          </form>
+        </div>
+
+        <div class="booking-confirmation" id="booking-confirmation" hidden>
+          <div class="confirmation-icon"><span class="material-symbols-outlined" aria-hidden="true">check</span></div>
+          <div class="booking-eyebrow">Request received</div>
+          <h2>Consultation requested</h2>
+          <p class="booking-intro">Keep this reference for your records.</p>
+          <div class="booking-reference" id="booking-reference"></div>
+          <dl class="booking-summary" id="booking-summary"></dl>
+          <p class="booking-email-status" id="booking-email-status" role="status"></p>
+          <div class="confirmation-actions">
+            <button class="booking-submit" type="button" id="print-receipt"><span class="material-symbols-outlined" aria-hidden="true">print</span> Print Receipt / Download PDF</button>
+            <button class="booking-secondary" type="button" id="new-booking">Make Another Request</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="script.js"></script>
   </body>

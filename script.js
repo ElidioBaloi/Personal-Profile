@@ -49,6 +49,146 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const bookingModal = document.getElementById('booking-modal');
+  const bookingForm = document.getElementById('booking-form');
+  const bookingFormView = document.getElementById('booking-form-view');
+  const bookingConfirmation = document.getElementById('booking-confirmation');
+  const bookingError = document.getElementById('booking-error');
+  const specialtySelect = document.getElementById('specialty');
+  const pediatricFields = document.getElementById('pediatric-fields');
+  const preferredDate = document.getElementById('preferred-date');
+  const bookingConfig = {
+    publicKey: 'YOUR_EMAILJS_PUBLIC_KEY',
+    serviceId: 'YOUR_EMAILJS_SERVICE_ID',
+    templateId: 'YOUR_EMAILJS_TEMPLATE_ID',
+  };
+
+  const isEmailConfigured = () => Object.values(bookingConfig).every((value) => !value.startsWith('YOUR_'));
+
+  if (bookingModal && bookingForm) {
+    const openBookingModal = (event) => {
+      event.preventDefault();
+      bookingModal.classList.add('is-open');
+      bookingModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('booking-is-open');
+      window.setTimeout(() => bookingForm.querySelector('input')?.focus(), 150);
+    };
+
+    const closeBookingModal = () => {
+      bookingModal.classList.remove('is-open');
+      bookingModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('booking-is-open');
+    };
+
+    document.querySelectorAll('.booking-trigger').forEach((trigger) => {
+      trigger.addEventListener('click', openBookingModal);
+    });
+
+    bookingModal.querySelectorAll('[data-booking-close]').forEach((control) => {
+      control.addEventListener('click', closeBookingModal);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && bookingModal.classList.contains('is-open')) {
+        closeBookingModal();
+      }
+    });
+
+    if (preferredDate) {
+      preferredDate.min = new Date().toISOString().split('T')[0];
+    }
+
+    const updatePediatricFields = () => {
+      const isPediatric = specialtySelect.value === 'Pediatric Nutrition';
+      pediatricFields.hidden = !isPediatric;
+      pediatricFields.querySelectorAll('input').forEach((input) => {
+        input.required = isPediatric;
+      });
+    };
+
+    specialtySelect.addEventListener('change', updatePediatricFields);
+
+    const createBookingReference = () => `#BAL-${Math.floor(100000 + Math.random() * 900000)}`;
+    const formatDate = (date) => new Date(`${date}T00:00:00`).toLocaleDateString(undefined, {
+      year: 'numeric', month: 'long', day: 'numeric',
+    });
+
+    const baseSummaryFields = [
+      ['Name', 'fullName'],
+      ['Email', 'email'],
+      ['Phone', 'phone'],
+      ['Age', 'age'],
+      ['Sex', 'sex'],
+      ['Occupation', 'occupation'],
+      ['Specialty', 'specialty'],
+      ['Preferred date', 'preferredDate'],
+      ['Time slot', 'timeSlot'],
+      ['Format', 'format'],
+    ];
+
+    const getFormData = () => {
+      const data = Object.fromEntries(new FormData(bookingForm).entries());
+      data.preferredDate = formatDate(data.preferredDate);
+      data.bookingReference = createBookingReference();
+      return data;
+    };
+
+    const renderSummary = (data) => {
+      const summaryFields = data.specialty === 'Pediatric Nutrition'
+        ? [...baseSummaryFields.slice(0, 7), ['Child age', 'childAge'], ['Parent/Guardian', 'guardianName'], ...baseSummaryFields.slice(7)]
+        : baseSummaryFields;
+      document.getElementById('booking-reference').textContent = data.bookingReference;
+      document.getElementById('booking-summary').innerHTML = summaryFields.map(([label, key]) => `<div><dt>${label}</dt><dd>${data[key] || 'Not provided'}</dd></div>`).join('');
+    };
+
+    const sendConfirmationEmail = (data) => {
+      if (!isEmailConfigured() || !window.emailjs) {
+        return Promise.resolve(false);
+      }
+      emailjs.init({ publicKey: bookingConfig.publicKey });
+      return emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, {
+        to_email: data.email,
+        patient_name: data.fullName,
+        booking_reference: data.bookingReference,
+        specialty: data.specialty,
+        preferred_date: data.preferredDate,
+        time_slot: data.timeSlot,
+        format: data.format,
+        notes: data.notes || 'None provided',
+      }).then(() => true).catch(() => false);
+    };
+
+    bookingForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      bookingError.textContent = '';
+      if (!bookingForm.checkValidity()) {
+        bookingForm.reportValidity();
+        bookingError.textContent = 'Please complete all required fields.';
+        return;
+      }
+
+      const data = getFormData();
+      renderSummary(data);
+      bookingFormView.hidden = true;
+      bookingConfirmation.hidden = false;
+      sendConfirmationEmail(data).then((wasSent) => {
+        document.getElementById('booking-email-status').textContent = wasSent
+          ? 'A confirmation email has been sent to your inbox.'
+          : 'Your request is recorded. Email delivery will activate after EmailJS is configured.';
+      });
+    });
+
+    document.getElementById('print-receipt').addEventListener('click', () => window.print());
+    document.getElementById('new-booking').addEventListener('click', () => {
+      bookingForm.reset();
+      updatePediatricFields();
+      bookingError.textContent = '';
+      bookingConfirmation.hidden = true;
+      bookingFormView.hidden = false;
+      window.setTimeout(() => bookingForm.querySelector('input')?.focus(), 50);
+    });
+  }
+
   const contactDropdown = document.getElementById('contact-dropdown');
   const contactToggle = document.getElementById('contact-toggle');
   const contactMenu = document.getElementById('contact-menu');
