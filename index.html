@@ -351,6 +351,70 @@
       </section>
     </div>
 
+    <main class="admin-portal" id="admin-portal" aria-hidden="true">
+      <section class="admin-shell">
+        <div class="admin-login" id="admin-login-view">
+          <div class="booking-eyebrow">Private access</div>
+          <h1>Admin Portal</h1>
+          <p>Sign in to view and manage consultation requests.</p>
+          <form id="admin-login-form">
+            <label class="booking-field">
+              <span>Admin password</span>
+              <input id="admin-password" type="password" autocomplete="current-password" required />
+            </label>
+            <p class="booking-error" id="admin-login-error" role="alert"></p>
+            <button class="booking-submit" type="submit">Sign In</button>
+          </form>
+        </div>
+
+        <div class="admin-dashboard" id="admin-dashboard-view" hidden>
+          <header class="admin-header">
+            <div>
+              <div class="booking-eyebrow">Private workspace</div>
+              <h1>Consultation Bookings</h1>
+            </div>
+            <button class="booking-secondary" type="button" id="admin-logout">Sign Out</button>
+          </header>
+          <div class="admin-toolbar">
+            <input id="admin-search" type="search" placeholder="Search patient or order number" aria-label="Search bookings" />
+            <select id="admin-specialty-filter" aria-label="Filter by specialty">
+              <option value="">All specialties</option>
+              <option>Athletic Performance</option>
+              <option>Body Composition</option>
+              <option>Pediatric Nutrition</option>
+              <option>Reproductive Health</option>
+              <option>General Nutrition</option>
+            </select>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr><th>Order #</th><th>Patient Name</th><th>Age</th><th>Sex</th><th>Occupation</th><th>Specialty</th><th>Date &amp; Time</th><th>Format</th><th>Status</th></tr>
+              </thead>
+              <tbody id="admin-bookings-body"></tbody>
+            </table>
+            <p class="admin-empty" id="admin-empty">No bookings found.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="admin-detail-modal" id="admin-detail-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="admin-detail-title">
+      <div class="booking-modal-backdrop" data-admin-detail-close></div>
+      <section class="booking-card admin-detail-card">
+        <button class="booking-close" type="button" aria-label="Close booking details" data-admin-detail-close><span class="material-symbols-outlined">close</span></button>
+        <div class="booking-eyebrow">Booking details</div>
+        <h2 id="admin-detail-title">Booking</h2>
+        <dl class="admin-detail-list" id="admin-detail-list"></dl>
+        <div class="admin-detail-actions">
+          <label class="booking-field"><span>Update Status</span><select id="admin-status-select"><option>Pending</option><option>Confirmed</option><option>Completed</option></select></label>
+          <button class="booking-submit" type="button" id="admin-update-status">Save Status</button>
+          <button class="booking-secondary" type="button" id="admin-print-receipt">Print Patient Receipt</button>
+          <button class="admin-delete-button" type="button" id="admin-delete-booking">Delete Entry</button>
+        </div>
+      </section>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="script.js"></script>

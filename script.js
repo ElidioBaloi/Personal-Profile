@@ -65,6 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
     templateId: 'YOUR_EMAILJS_TEMPLATE_ID',
     ownerEmail: 'elidiobaloi@gmail.com',
   };
+  const bookingStoreConfig = {
+    endpoint: '',
+    adminApiKey: '',
+  };
 
   const isEmailConfigured = () => Object.values(bookingConfig).every((value) => !value.startsWith('YOUR_'));
 
@@ -163,6 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = Object.fromEntries(new FormData(bookingForm).entries());
       data.preferredDate = formatDate(data.preferredDate);
       data.bookingReference = createBookingReference();
+      data.status = 'Pending';
+      data.createdAt = new Date().toISOString();
       return data;
     };
 
@@ -205,6 +211,20 @@ document.addEventListener('DOMContentLoaded', () => {
       ]).then(() => true).catch(() => false);
     };
 
+    const saveBookingRecord = (data) => {
+      const records = JSON.parse(localStorage.getItem('clinicalBookings') || '[]');
+      records.unshift(data);
+      localStorage.setItem('clinicalBookings', JSON.stringify(records));
+      if (bookingStoreConfig.endpoint && bookingStoreConfig.adminApiKey) {
+        fetch(bookingStoreConfig.endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Admin-Key': bookingStoreConfig.adminApiKey },
+          body: JSON.stringify(data),
+        }).catch(() => undefined);
+      }
+      return data;
+    };
+
     bookingForm.addEventListener('submit', (event) => {
       event.preventDefault();
       bookingError.textContent = '';
@@ -221,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const data = getFormData();
+      saveBookingRecord(data);
       renderSummary(data);
       bookingFormView.hidden = true;
       bookingConfirmation.hidden = false;
@@ -241,6 +262,128 @@ document.addEventListener('DOMContentLoaded', () => {
       bookingFormView.hidden = false;
       window.setTimeout(() => bookingForm.querySelector('input')?.focus(), 50);
     });
+  }
+
+  const adminPortal = document.getElementById('admin-portal');
+  const adminLoginForm = document.getElementById('admin-login-form');
+  const adminLoginView = document.getElementById('admin-login-view');
+  const adminDashboardView = document.getElementById('admin-dashboard-view');
+  const adminLoginError = document.getElementById('admin-login-error');
+  const adminBookingsBody = document.getElementById('admin-bookings-body');
+  const adminEmpty = document.getElementById('admin-empty');
+  const adminDetailModal = document.getElementById('admin-detail-modal');
+  let selectedBookingReference = null;
+
+  const adminAccessCode = 'BAL-ADMIN-2026';
+  const getBookings = () => JSON.parse(localStorage.getItem('clinicalBookings') || '[]');
+  const saveBookings = (records) => localStorage.setItem('clinicalBookings', JSON.stringify(records));
+
+  if (adminPortal) {
+    const renderAdminBookings = () => {
+      const search = document.getElementById('admin-search').value.toLowerCase();
+      const specialty = document.getElementById('admin-specialty-filter').value;
+      const records = getBookings().filter((booking) => {
+        const matchesSearch = !search || `${booking.bookingReference} ${booking.fullName}`.toLowerCase().includes(search);
+        return matchesSearch && (!specialty || booking.specialty === specialty);
+      });
+      adminBookingsBody.replaceChildren();
+      adminEmpty.hidden = records.length > 0;
+      records.forEach((booking) => {
+        const row = document.createElement('tr');
+        row.tabIndex = 0;
+        row.dataset.reference = booking.bookingReference;
+        [booking.bookingReference, booking.fullName, booking.age, booking.sex, booking.occupation, booking.specialty, `${booking.preferredDate} ${booking.timeSlot}`, booking.format, booking.status || 'Pending'].forEach((value, index) => {
+          const cell = document.createElement('td');
+          cell.textContent = value || 'Not provided';
+          if (index === 8) cell.className = `status-tag status-${String(value || 'Pending').toLowerCase()}`;
+          row.appendChild(cell);
+        });
+        row.addEventListener('click', () => openBookingDetails(booking.bookingReference));
+        row.addEventListener('keydown', (event) => { if (event.key === 'Enter') openBookingDetails(booking.bookingReference); });
+        adminBookingsBody.appendChild(row);
+      });
+    };
+
+    const openBookingDetails = (reference) => {
+      const booking = getBookings().find((item) => item.bookingReference === reference);
+      if (!booking) return;
+      selectedBookingReference = reference;
+      document.getElementById('admin-detail-title').textContent = reference;
+      document.getElementById('admin-status-select').value = booking.status || 'Pending';
+      const detailFields = [['Full Name', 'fullName'], ['Email', 'email'], ['Phone', 'phone'], ['Age', 'age'], ['Sex', 'sex'], ['Occupation', 'occupation'], ['Residence', 'residence'], ['Specialty', 'specialty'], ['Date & Time', 'dateTime'], ['Format', 'format'], ['Child Age', 'childAge'], ['Parent/Guardian', 'guardianName'], ['Clinical Notes', 'notes']];
+      const detailList = document.getElementById('admin-detail-list');
+      detailList.replaceChildren();
+      detailFields.forEach(([label, key]) => {
+        const value = key === 'dateTime' ? `${booking.preferredDate} ${booking.timeSlot}` : booking[key];
+        if (!value) return;
+        const wrapper = document.createElement('div');
+        const term = document.createElement('dt');
+        const description = document.createElement('dd');
+        term.textContent = label;
+        description.textContent = value;
+        wrapper.append(term, description);
+        detailList.appendChild(wrapper);
+      });
+      adminDetailModal.classList.add('is-open');
+      adminDetailModal.setAttribute('aria-hidden', 'false');
+    };
+
+    const closeBookingDetails = () => {
+      adminDetailModal.classList.remove('is-open');
+      adminDetailModal.setAttribute('aria-hidden', 'true');
+      selectedBookingReference = null;
+    };
+
+    const setAdminRoute = () => {
+      const isAdminRoute = window.location.hash.toLowerCase() === '#admin';
+      adminPortal.classList.toggle('is-visible', isAdminRoute);
+      adminPortal.setAttribute('aria-hidden', String(!isAdminRoute));
+      if (isAdminRoute) {
+        const authenticated = sessionStorage.getItem('clinicalAdminAuthenticated') === 'true';
+        adminLoginView.hidden = authenticated;
+        adminDashboardView.hidden = !authenticated;
+        if (authenticated) renderAdminBookings();
+      }
+    };
+
+    adminLoginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const password = document.getElementById('admin-password').value;
+      if (password !== adminAccessCode) {
+        adminLoginError.textContent = 'Incorrect admin password.';
+        return;
+      }
+      sessionStorage.setItem('clinicalAdminAuthenticated', 'true');
+      adminLoginView.hidden = true;
+      adminDashboardView.hidden = false;
+      adminLoginError.textContent = '';
+      renderAdminBookings();
+    });
+    document.getElementById('admin-logout').addEventListener('click', () => {
+      sessionStorage.removeItem('clinicalAdminAuthenticated');
+      window.location.hash = '';
+    });
+    document.getElementById('admin-search').addEventListener('input', renderAdminBookings);
+    document.getElementById('admin-specialty-filter').addEventListener('change', renderAdminBookings);
+    adminDetailModal.querySelectorAll('[data-admin-detail-close]').forEach((control) => control.addEventListener('click', closeBookingDetails));
+    document.getElementById('admin-update-status').addEventListener('click', () => {
+      const records = getBookings();
+      const booking = records.find((item) => item.bookingReference === selectedBookingReference);
+      if (!booking) return;
+      booking.status = document.getElementById('admin-status-select').value;
+      saveBookings(records);
+      closeBookingDetails();
+      renderAdminBookings();
+    });
+    document.getElementById('admin-delete-booking').addEventListener('click', () => {
+      if (!selectedBookingReference || !window.confirm('Delete this booking permanently?')) return;
+      saveBookings(getBookings().filter((item) => item.bookingReference !== selectedBookingReference));
+      closeBookingDetails();
+      renderAdminBookings();
+    });
+    document.getElementById('admin-print-receipt').addEventListener('click', () => window.print());
+    window.addEventListener('hashchange', setAdminRoute);
+    setAdminRoute();
   }
 
   const contactDropdown = document.getElementById('contact-dropdown');

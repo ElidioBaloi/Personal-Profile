@@ -536,13 +536,229 @@ body.booking-is-open {
   overflow: hidden;
 }
 
+.admin-portal {
+  display: none;
+  min-height: 100vh;
+  padding: 4rem max(1rem, 5vw);
+  background: #0e0e0e;
+}
+
+.admin-portal.is-visible {
+  display: block;
+}
+
+.admin-shell {
+  width: min(100%, 1280px);
+  margin: 0 auto;
+}
+
+.admin-login,
+.admin-dashboard {
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border: 1px solid rgba(75, 226, 119, 0.25);
+  border-radius: 0.75rem;
+  background: #131313;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+}
+
+.admin-login {
+  width: min(100%, 28rem);
+  margin: 8vh auto 0;
+}
+
+.admin-login h1,
+.admin-header h1 {
+  margin: 0;
+  color: #e5e2e1;
+  font-family: Geist, sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+}
+
+.admin-login p {
+  color: #bccbb9;
+}
+
+.admin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.admin-header .booking-secondary {
+  width: auto;
+}
+
+.admin-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(12rem, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-toolbar input,
+.admin-toolbar select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #3d4a3d;
+  border-radius: 0.25rem;
+  padding: 0.8rem;
+  color: #e5e2e1;
+  background: #1c1b1b;
+  font: inherit;
+}
+
+.admin-toolbar input:focus,
+.admin-toolbar select:focus {
+  border-color: #10b981;
+  outline: 2px solid rgba(16, 185, 129, 0.2);
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #3d4a3d;
+  border-radius: 0.25rem;
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+  color: #e5e2e1;
+  font-size: 0.82rem;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.9rem 0.75rem;
+  border-bottom: 1px solid #2a2a2a;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.admin-table th {
+  color: #8e9d8b;
+  background: #1c1b1b;
+  font-family: Geist, sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.admin-table tbody tr:hover,
+.admin-table tbody tr:focus-visible {
+  background: rgba(16, 185, 129, 0.08);
+  outline: none;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.status-tag {
+  display: inline-block;
+  border-radius: 9999px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.status-pending { color: #f5c86b; background: rgba(245, 200, 107, 0.12); }
+.status-confirmed { color: #4be277; background: rgba(75, 226, 119, 0.12); }
+.status-completed { color: #adc6ff; background: rgba(173, 198, 255, 0.12); }
+
+.admin-empty {
+  padding: 2rem;
+  color: #8e9d8b;
+  text-align: center;
+}
+
+.admin-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.admin-detail-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.admin-detail-card {
+  z-index: 1;
+  width: min(100%, 680px);
+}
+
+.admin-detail-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.admin-detail-list dt {
+  color: #8e9d8b;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.admin-detail-list dd {
+  margin: 0.2rem 0 0;
+  color: #e5e2e1;
+  overflow-wrap: anywhere;
+}
+
+.admin-detail-actions {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-detail-actions .booking-submit,
+.admin-detail-actions .booking-secondary {
+  width: 100%;
+}
+
+.admin-delete-button {
+  border: 1px solid rgba(255, 180, 171, 0.45);
+  border-radius: 0.25rem;
+  padding: 0.85rem 1rem;
+  color: #ffb4ab;
+  background: transparent;
+  font-family: Geist, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.admin-delete-button:hover,
+.admin-delete-button:focus-visible {
+  background: rgba(255, 180, 171, 0.1);
+  outline: none;
+}
+
 @media print {
   body * {
     visibility: hidden !important;
   }
 
   .booking-modal,
-  .booking-modal * {
+  .booking-modal *,
+  .admin-detail-modal,
+  .admin-detail-modal * {
     visibility: visible !important;
   }
 
@@ -553,10 +769,26 @@ body.booking-is-open {
     opacity: 1;
   }
 
+  .admin-detail-modal {
+    position: absolute;
+    display: block;
+    padding: 0;
+    opacity: 1;
+  }
+
+  .admin-detail-card {
+    width: 100%;
+    max-height: none;
+    border: 0;
+    box-shadow: none;
+  }
+
   .booking-modal-backdrop,
+  .admin-detail-modal .booking-modal-backdrop,
   .booking-close,
   .confirmation-actions,
-  .booking-email-status {
+  .booking-email-status,
+  .admin-detail-actions {
     display: none !important;
   }
 
@@ -626,6 +858,15 @@ body.booking-is-open {
   .pediatric-fields,
   .booking-summary {
     grid-template-columns: 1fr;
+  }
+
+  .admin-toolbar,
+  .admin-detail-list {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-header {
+    flex-direction: column;
   }
 }
 
