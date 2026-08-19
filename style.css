@@ -150,6 +150,75 @@ html:not(.dark) .shimmer {
   transform: scale(1.04);
 }
 
+.contact-dropdown {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.contact-menu {
+  min-width: 11rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(134, 149, 133, 0.8);
+  border-radius: 0.25rem;
+  background: #1c1b1b;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(0.5rem) scale(0.96);
+  transform-origin: bottom right;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.contact-dropdown.is-open .contact-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.contact-menu-label {
+  margin-bottom: 0.65rem;
+  color: #e5e2e1;
+  font-family: Geist, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.contact-links {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.contact-link {
+  display: inline-flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: #e5e2e1;
+  background: #2a2a2a;
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-link:hover,
+.contact-link:focus-visible {
+  color: #003915;
+  background: #4be277;
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.contact-link svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 .mobile-menu-toggle {
   display: none;
 }

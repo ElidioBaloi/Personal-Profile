@@ -49,6 +49,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const contactDropdown = document.getElementById('contact-dropdown');
+  const contactToggle = document.getElementById('contact-toggle');
+  const contactMenu = document.getElementById('contact-menu');
+
+  if (contactDropdown && contactToggle && contactMenu) {
+    const closeContactMenu = () => {
+      contactDropdown.classList.remove('is-open');
+      contactToggle.setAttribute('aria-expanded', 'false');
+      contactToggle.setAttribute('aria-label', 'Open contact options');
+      contactMenu.setAttribute('aria-hidden', 'true');
+    };
+
+    contactToggle.addEventListener('click', () => {
+      const isOpen = contactDropdown.classList.toggle('is-open');
+      contactToggle.setAttribute('aria-expanded', String(isOpen));
+      contactToggle.setAttribute('aria-label', isOpen ? 'Close contact options' : 'Open contact options');
+      contactMenu.setAttribute('aria-hidden', String(!isOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!contactDropdown.contains(event.target)) {
+        closeContactMenu();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeContactMenu();
+      }
+    });
+  }
+
   const shaderCanvas = document.getElementById('shader-container');
   if (shaderCanvas) {
     const gl = shaderCanvas.getContext('webgl');
