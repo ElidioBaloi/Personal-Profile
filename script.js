@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const calculatorModal = document.getElementById('calculator-modal');
   const calculatorTitle = document.getElementById('calculator-title');
   const calculatorContent = document.getElementById('calculator-content');
-  const calculatorMenus = document.querySelectorAll('.tools-nav-dropdown, .mobile-tools-dropdown, .hero-tools-dropdown');
+  const calculatorMenus = document.querySelectorAll('.hero-tools-dropdown');
 
   if (calculatorModal && calculatorTitle && calculatorContent) {
     const calculatorTemplates = {
