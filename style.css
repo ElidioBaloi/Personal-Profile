@@ -388,6 +388,11 @@ html:not(.dark) .shimmer {
   resize: vertical;
 }
 
+.booking-field-hint {
+  color: #8e9d8b;
+  font-size: 0.72rem;
+}
+
 .booking-fieldset,
 .booking-field fieldset {
   border: 0;

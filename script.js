@@ -57,10 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const specialtySelect = document.getElementById('specialty');
   const pediatricFields = document.getElementById('pediatric-fields');
   const preferredDate = document.getElementById('preferred-date');
+  const timeSlot = document.getElementById('time-slot');
+  const timeSlotHint = document.getElementById('time-slot-hint');
   const bookingConfig = {
     publicKey: 'YOUR_EMAILJS_PUBLIC_KEY',
     serviceId: 'YOUR_EMAILJS_SERVICE_ID',
     templateId: 'YOUR_EMAILJS_TEMPLATE_ID',
+    ownerEmail: 'elidiobaloi@gmail.com',
   };
 
   const isEmailConfigured = () => Object.values(bookingConfig).every((value) => !value.startsWith('YOUR_'));
@@ -98,6 +101,35 @@ document.addEventListener('DOMContentLoaded', () => {
       preferredDate.min = new Date().toISOString().split('T')[0];
     }
 
+    const isBlackoutSlot = (dateValue, timeValue) => {
+      if (!dateValue || !timeValue) {
+        return false;
+      }
+      const date = new Date(`${dateValue}T00:00:00`);
+      const day = date.getDay();
+      const startHour = Number(timeValue.slice(0, 2));
+      return (day === 5 && startHour >= 16) || day === 6;
+    };
+
+    const updateTimeSlots = () => {
+      if (!timeSlot || !preferredDate) {
+        return;
+      }
+      const isSaturday = preferredDate.value && new Date(`${preferredDate.value}T00:00:00`).getDay() === 6;
+      timeSlot.querySelectorAll('option[value]').forEach((option) => {
+        option.disabled = isBlackoutSlot(preferredDate.value, option.value);
+      });
+      if (timeSlot.selectedOptions[0]?.disabled) {
+        timeSlot.value = '';
+      }
+      timeSlotHint.textContent = isSaturday
+        ? 'All Saturday slots are unavailable until 19:00.'
+        : 'Friday from 15:00 through Saturday 19:00 is unavailable.';
+    };
+
+    preferredDate.addEventListener('change', updateTimeSlots);
+    updateTimeSlots();
+
     const updatePediatricFields = () => {
       const isPediatric = specialtySelect.value === 'Pediatric Nutrition';
       pediatricFields.hidden = !isPediatric;
@@ -120,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ['Age', 'age'],
       ['Sex', 'sex'],
       ['Occupation', 'occupation'],
+      ['Place of residence', 'residence'],
       ['Specialty', 'specialty'],
       ['Preferred date', 'preferredDate'],
       ['Time slot', 'timeSlot'],
@@ -146,16 +179,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return Promise.resolve(false);
       }
       emailjs.init({ publicKey: bookingConfig.publicKey });
-      return emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, {
+      const emailParams = {
         to_email: data.email,
+        owner_email: bookingConfig.ownerEmail,
         patient_name: data.fullName,
         booking_reference: data.bookingReference,
+        phone: data.phone,
+        age: data.age,
+        sex: data.sex,
+        occupation: data.occupation,
+        residence: data.residence,
         specialty: data.specialty,
         preferred_date: data.preferredDate,
         time_slot: data.timeSlot,
         format: data.format,
         notes: data.notes || 'None provided',
-      }).then(() => true).catch(() => false);
+      };
+      return Promise.all([
+        emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, emailParams),
+        emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, {
+          ...emailParams,
+          to_email: bookingConfig.ownerEmail,
+          notification_type: 'New consultation booking notification',
+        }),
+      ]).then(() => true).catch(() => false);
     };
 
     bookingForm.addEventListener('submit', (event) => {
@@ -164,6 +211,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!bookingForm.checkValidity()) {
         bookingForm.reportValidity();
         bookingError.textContent = 'Please complete all required fields.';
+        return;
+      }
+
+      if (isBlackoutSlot(preferredDate.value, timeSlot.value)) {
+        bookingError.textContent = 'That time is unavailable. Please choose a slot outside Friday 15:00 through Saturday 19:00.';
+        timeSlot.focus();
         return;
       }
 
@@ -182,6 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('new-booking').addEventListener('click', () => {
       bookingForm.reset();
       updatePediatricFields();
+      updateTimeSlots();
       bookingError.textContent = '';
       bookingConfirmation.hidden = true;
       bookingFormView.hidden = false;

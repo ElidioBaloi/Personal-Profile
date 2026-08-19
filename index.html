@@ -276,6 +276,10 @@
                 <span>Occupation <b>*</b></span>
                 <input type="text" name="occupation" required />
               </label>
+              <label class="booking-field">
+                <span>Place of Residence <b>*</b></span>
+                <input type="text" name="residence" autocomplete="address-level2" required />
+              </label>
               <label class="booking-field booking-field-wide">
                 <span>Specialty Focus <b>*</b></span>
                 <select name="specialty" id="specialty" required>
@@ -303,21 +307,23 @@
               </label>
               <label class="booking-field">
                 <span>Time Slot <b>*</b></span>
-                <select name="timeSlot" required>
+                <select name="timeSlot" id="time-slot" required>
                   <option value="">Select a time</option>
-                  <option>09:00 - 10:00</option>
-                  <option>11:00 - 12:00</option>
-                  <option>14:00 - 15:00</option>
-                  <option>16:00 - 17:00</option>
+                  <option value="09:00 - 10:00">09:00 - 10:00</option>
+                  <option value="11:00 - 12:00">11:00 - 12:00</option>
+                  <option value="14:00 - 15:00">14:00 - 15:00</option>
+                  <option value="16:00 - 17:00">16:00 - 17:00</option>
+                </select>
+                <small class="booking-field-hint" id="time-slot-hint">Friday from 15:00 through Saturday 19:00 is unavailable.</small>
+              </label>
+              <label class="booking-field">
+                <span>Format <b>*</b></span>
+                <select name="format" required>
+                  <option value="">Select a format</option>
+                  <option value="Virtual Consultation">Virtual Consultation</option>
+                  <option value="In-Person Visit">In-Person Visit</option>
                 </select>
               </label>
-              <fieldset class="booking-field booking-field-wide">
-                <legend>Format <b>*</b></legend>
-                <div class="booking-radio-group">
-                  <label><input type="radio" name="format" value="Virtual Consultation" required /> <span>Virtual Consultation</span></label>
-                  <label><input type="radio" name="format" value="In-Person Visit" /> <span>In-Person Visit</span></label>
-                </div>
-              </fieldset>
               <label class="booking-field booking-field-wide">
                 <span>Main health goals or dietary requirements</span>
                 <textarea name="notes" rows="4" placeholder="Optional"></textarea>
