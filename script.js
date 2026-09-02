@@ -307,7 +307,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     specialtySelect.addEventListener('change', updatePediatricFields);
 
-    const createBookingReference = () => `#BAL-${Math.floor(100000 + Math.random() * 900000)}`;
+    const createBookingReference = () => {
+      const records = JSON.parse(localStorage.getItem('clinicalBookings') || '[]');
+      const highestExisting = records.reduce((highest, record) => {
+        const number = Number(String(record.bookingReference || '').replace('#BAL-', ''));
+        return Number.isFinite(number) ? Math.max(highest, number) : highest;
+      }, 260000);
+      const nextNumber = Math.max(Number(localStorage.getItem('clinicalBookingSequence') || 260001), highestExisting + 1);
+      localStorage.setItem('clinicalBookingSequence', String(nextNumber + 1));
+      return `#BAL-${nextNumber}`;
+    };
     const formatDate = (date) => new Date(`${date}T00:00:00`).toLocaleDateString({ en: 'en-US', pt: 'pt-PT', es: 'es-ES', zh: 'zh-CN', 'zh-TW': 'zh-TW' }[localStorage.getItem('siteLanguage') || 'en'], {
       year: 'numeric', month: 'long', day: 'numeric',
     });
@@ -419,17 +428,22 @@ document.addEventListener('DOMContentLoaded', () => {
       bookingConfirmation.hidden = false;
       sendConfirmationEmail(data).then((wasSent) => {
         const emailStatus = {
-          en: [ 'A confirmation email has been sent to your inbox.', 'Your request is recorded. Email delivery will activate after EmailJS is configured.' ],
-          pt: [ 'Um e-mail de confirmação foi enviado para sua caixa de entrada.', 'Sua solicitação foi registrada. O envio de e-mail será ativado após a configuração do EmailJS.' ],
-          es: [ 'Se ha enviado un correo de confirmación a su bandeja de entrada.', 'Su solicitud ha sido registrada. El envío de correos se activará después de configurar EmailJS.' ],
-          zh: [ '确认邮件已发送到您的收件箱。', '您的申请已记录。配置 EmailJS 后将启用邮件发送。' ],
-          'zh-TW': [ '確認郵件已寄送至您的收件匣。', '您的申請已記錄。設定 EmailJS 後將啟用郵件寄送。' ]
+          en: [ 'A confirmation email has been sent to your inbox.', 'Your request is recorded, but the confirmation email could not be sent.', 'Your request is recorded. Automatic email is unavailable until EmailJS is configured.' ],
+          pt: [ 'Um e-mail de confirmação foi enviado para sua caixa de entrada.', 'Sua solicitação foi registrada, mas o e-mail de confirmação não pôde ser enviado.', 'Sua solicitação foi registrada. O envio automático de e-mail estará disponível após a configuração do EmailJS.' ],
+          es: [ 'Se ha enviado un correo de confirmación a su bandeja de entrada.', 'Su solicitud ha sido registrada, pero no se pudo enviar el correo de confirmación.', 'Su solicitud ha sido registrada. El envío automático estará disponible después de configurar EmailJS.' ],
+          zh: [ '确认邮件已发送到您的收件箱。', '您的申请已记录，但确认邮件无法发送。', '您的申请已记录。配置 EmailJS 后将启用自动邮件。' ],
+          'zh-TW': [ '確認郵件已寄送至您的收件匣。', '您的申請已記錄，但確認郵件無法寄送。', '您的申請已記錄。設定 EmailJS 後將啟用自動郵件。' ]
         }[localStorage.getItem('siteLanguage') || 'en'];
-        document.getElementById('booking-email-status').textContent = emailStatus[wasSent ? 0 : 1];
+        document.getElementById('booking-email-status').textContent = isEmailConfigured()
+          ? emailStatus[wasSent ? 0 : 1]
+          : emailStatus[2];
       });
     });
 
-    document.getElementById('print-receipt').addEventListener('click', () => window.print());
+    document.getElementById('print-receipt').addEventListener('click', () => {
+      document.body.classList.add('print-booking-receipt');
+      window.print();
+    });
     document.getElementById('new-booking').addEventListener('click', () => {
       bookingForm.reset();
       updatePediatricFields();
@@ -634,10 +648,17 @@ document.addEventListener('DOMContentLoaded', () => {
       closeBookingDetails();
       renderAdminBookings();
     });
-    document.getElementById('admin-print-receipt').addEventListener('click', () => window.print());
+    document.getElementById('admin-print-receipt').addEventListener('click', () => {
+      document.body.classList.add('print-admin-receipt');
+      window.print();
+    });
     window.addEventListener('hashchange', setAdminRoute);
     setAdminRoute();
   }
+
+  window.addEventListener('afterprint', () => {
+    document.body.classList.remove('print-booking-receipt', 'print-admin-receipt');
+  });
 
   const contactDropdown = document.getElementById('contact-dropdown');
   const contactToggle = document.getElementById('contact-toggle');

@@ -1161,20 +1161,24 @@ body.booking-is-open {
     line-height: 1.25;
   }
 
-  body * {
-    visibility: hidden !important;
-  }
+  body > * { display: none !important; }
+
+  body.print-booking-receipt .booking-modal,
+  body.print-admin-receipt .admin-detail-modal { display: block !important; }
+
+  body:not(.print-booking-receipt) .booking-modal,
+  body:not(.print-admin-receipt) .admin-detail-modal { display: none !important; }
 
   .booking-modal,
   .booking-modal *,
   .admin-detail-modal,
-  .admin-detail-modal * {
-    visibility: visible !important;
-  }
+  .admin-detail-modal * { visibility: visible !important; }
 
   .booking-modal {
     position: absolute;
     display: block;
+    inset: 0;
+    width: 100%;
     padding: 0;
     opacity: 1;
   }
@@ -1182,6 +1186,8 @@ body.booking-is-open {
   .admin-detail-modal {
     position: absolute;
     display: block;
+    inset: 0;
+    width: 100%;
     padding: 0;
     opacity: 1;
   }
@@ -1212,6 +1218,11 @@ body.booking-is-open {
     background: #fff;
     font-family: "Times New Roman", Times, serif !important;
     font-size: 12px !important;
+  }
+
+  .booking-modal .booking-card,
+  .admin-detail-modal .booking-card {
+    display: block !important;
   }
 
   .booking-modal .booking-card,
