@@ -134,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const bookingError = document.getElementById('booking-error');
   const specialtySelect = document.getElementById('specialty');
   const pediatricFields = document.getElementById('pediatric-fields');
+  const ageLabel = document.getElementById('age-label');
   const preferredDate = document.getElementById('preferred-date');
   const timeSlot = document.getElementById('time-slot');
   const timeSlotHint = document.getElementById('time-slot-hint');
@@ -215,6 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const updatePediatricFields = () => {
       const isPediatric = ['Pediatric Consultation (children)', 'Pediatric Nutrition'].includes(specialtySelect.value);
       pediatricFields.hidden = !isPediatric;
+      ageLabel.firstChild.textContent = isPediatric ? "Child's age " : 'Age ';
       pediatricFields.querySelectorAll('input').forEach((input) => {
         input.required = isPediatric;
       });
@@ -252,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderSummary = (data) => {
       const summaryFields = ['Pediatric Consultation (children)', 'Pediatric Nutrition'].includes(data.specialty)
-        ? [...baseSummaryFields.slice(0, 7), ['Child age', 'childAge'], ['Parent/Guardian', 'guardianName'], ...baseSummaryFields.slice(7)]
+        ? [...baseSummaryFields.slice(0, 4), ['Parent/Guardian', 'guardianName'], ...baseSummaryFields.slice(4)]
         : baseSummaryFields;
       document.getElementById('booking-reference').textContent = data.bookingReference;
       document.getElementById('booking-summary').innerHTML = summaryFields.map(([label, key]) => `<div><dt>${label}</dt><dd>${data[key] || 'Not provided'}</dd></div>`).join('');
@@ -395,7 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedBookingReference = reference;
       document.getElementById('admin-detail-title').textContent = reference;
       document.getElementById('admin-status-select').value = booking.status || 'Pending';
-      const detailFields = [['Full Name', 'fullName'], ['Email', 'email'], ['Phone', 'phone'], ['Age', 'age'], ['Sex', 'sex'], ['Occupation', 'occupation'], ['Residence', 'residence'], ['Specialty', 'specialty'], ['Date & Time', 'dateTime'], ['Format', 'format'], ['Child Age', 'childAge'], ['Parent/Guardian', 'guardianName'], ['Clinical Notes', 'notes']];
+      const detailFields = [['Full Name', 'fullName'], ['Email', 'email'], ['Phone', 'phone'], ['Age', 'age'], ['Sex', 'sex'], ['Occupation', 'occupation'], ['Residence', 'residence'], ['Specialty', 'specialty'], ['Date & Time', 'dateTime'], ['Format', 'format'], ['Parent/Guardian', 'guardianName'], ['Clinical Notes', 'notes']];
       const detailList = document.getElementById('admin-detail-list');
       detailList.replaceChildren();
       detailFields.forEach(([label, key]) => {

@@ -282,7 +282,7 @@
                 <input type="tel" name="phone" autocomplete="tel" required />
               </label>
               <label class="booking-field">
-                <span>Age <b>*</b></span>
+                <span id="age-label">Age <b>*</b></span>
                 <input type="number" name="age" min="1" max="120" required />
               </label>
               <label class="booking-field">
@@ -303,10 +303,6 @@
                 <input type="text" name="residence" autocomplete="address-level2" required />
               </label>
               <div class="pediatric-fields booking-field-wide" id="pediatric-fields" hidden>
-                <label class="booking-field">
-                  <span>Child's Age <b>*</b></span>
-                  <input type="number" name="childAge" min="0" max="18" />
-                </label>
                 <label class="booking-field">
                   <span>Parent/Guardian Name <b>*</b></span>
                   <input type="text" name="guardianName" />
