@@ -1144,6 +1144,23 @@ body.booking-is-open {
 }
 
 @media print {
+  @page {
+    size: A5 portrait;
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    width: 148mm;
+    min-height: 210mm;
+    margin: 0;
+    color: #000;
+    background: #fff;
+    font-family: "Times New Roman", Times, serif !important;
+    font-size: 12px !important;
+    line-height: 1.25;
+  }
+
   body * {
     visibility: hidden !important;
   }
@@ -1190,6 +1207,51 @@ body.booking-is-open {
     max-height: none;
     border: 0;
     box-shadow: none;
+    padding: 0;
+    color: #000;
+    background: #fff;
+    font-family: "Times New Roman", Times, serif !important;
+    font-size: 12px !important;
+  }
+
+  .booking-modal .booking-card,
+  .booking-modal .booking-card * {
+    font-size: 12px !important;
+  }
+
+  .booking-modal .booking-card h2,
+  .booking-modal .booking-card h1 {
+    margin: 0 0 5mm;
+    color: #000;
+    font-family: "Times New Roman", Times, serif !important;
+    font-size: 14px !important;
+    line-height: 1.2;
+  }
+
+  .booking-card p,
+  .booking-card dt,
+  .booking-card dd,
+  .booking-card .booking-eyebrow,
+  .booking-card .booking-reference {
+    color: #000;
+    font-family: "Times New Roman", Times, serif !important;
+    font-size: 12px !important;
+  }
+
+  .booking-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm 6mm;
+    margin: 6mm 0;
+  }
+
+  .booking-summary dt {
+    font-weight: bold;
+  }
+
+  .booking-summary dd {
+    margin: 0;
+    overflow-wrap: anywhere;
   }
 }
 

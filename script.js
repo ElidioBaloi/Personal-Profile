@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     specialtySelect.addEventListener('change', updatePediatricFields);
 
     const createBookingReference = () => `#BAL-${Math.floor(100000 + Math.random() * 900000)}`;
-    const formatDate = (date) => new Date(`${date}T00:00:00`).toLocaleDateString(undefined, {
+    const formatDate = (date) => new Date(`${date}T00:00:00`).toLocaleDateString({ en: 'en-US', pt: 'pt-PT', es: 'es-ES', zh: 'zh-CN', 'zh-TW': 'zh-TW' }[localStorage.getItem('siteLanguage') || 'en'], {
       year: 'numeric', month: 'long', day: 'numeric',
     });
 
@@ -336,11 +336,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderSummary = (data) => {
+      const language = localStorage.getItem('siteLanguage') || 'en';
+      const dictionary = { ...(translations[language] || {}), ...(sharedTranslations[language] || {}) };
+      const summaryLabels = {
+        en: { Name: 'Name', Email: 'Email', Phone: 'Phone', Age: 'Age', Sex: 'Sex', Occupation: 'Occupation', 'Place of residence': 'Place of residence', Specialty: 'Specialty', 'Preferred date': 'Preferred date', 'Time slot': 'Time slot', Format: 'Format', 'Parent/Guardian': 'Parent/Guardian' },
+        pt: { Name: 'Nome', Email: 'E-mail', Phone: 'Telefone', Age: 'Idade', Sex: 'Sexo', Occupation: 'Profissão', 'Place of residence': 'Local de residência', Specialty: 'Área de atendimento', 'Preferred date': 'Data preferida', 'Time slot': 'Horário', Format: 'Forma de atendimento', 'Parent/Guardian': 'Pai, mãe ou responsável' },
+        es: { Name: 'Nombre', Email: 'Correo electrónico', Phone: 'Teléfono', Age: 'Edad', Sex: 'Sexo', Occupation: 'Profesión', 'Place of residence': 'Lugar de residencia', Specialty: 'Área de atención', 'Preferred date': 'Fecha preferida', 'Time slot': 'Hora', Format: 'Forma de consulta', 'Parent/Guardian': 'Padre, madre o tutor' },
+        zh: { Name: '姓名', Email: '电子邮箱', Phone: '电话', Age: '年龄', Sex: '性别', Occupation: '职业', 'Place of residence': '居住地', Specialty: '服务项目', 'Preferred date': '首选日期', 'Time slot': '时间', Format: '咨询方式', 'Parent/Guardian': '父母或监护人' },
+        'zh-TW': { Name: '姓名', Email: '電子郵件', Phone: '電話', Age: '年齡', Sex: '性別', Occupation: '職業', 'Place of residence': '居住地', Specialty: '服務項目', 'Preferred date': '首選日期', 'Time slot': '時間', Format: '諮詢方式', 'Parent/Guardian': '父母或監護人' }
+      }[language];
       const summaryFields = ['Pediatric Consultation (children)', 'Pediatric Nutrition'].includes(data.specialty)
         ? [...baseSummaryFields.slice(0, 4), ['Parent/Guardian', 'guardianName'], ...baseSummaryFields.slice(4)]
         : baseSummaryFields;
       document.getElementById('booking-reference').textContent = data.bookingReference;
-      document.getElementById('booking-summary').innerHTML = summaryFields.map(([label, key]) => `<div><dt>${label}</dt><dd>${data[key] || 'Not provided'}</dd></div>`).join('');
+      document.getElementById('booking-summary').innerHTML = summaryFields.map(([label, key]) => `<div><dt>${summaryLabels[label] || dictionary[label] || label}</dt><dd>${dictionary[data[key]] || data[key] || (dictionary['Not provided'] || 'Not provided')}</dd></div>`).join('');
     };
 
     const sendConfirmationEmail = (data) => {
@@ -409,9 +418,14 @@ document.addEventListener('DOMContentLoaded', () => {
       bookingFormView.hidden = true;
       bookingConfirmation.hidden = false;
       sendConfirmationEmail(data).then((wasSent) => {
-        document.getElementById('booking-email-status').textContent = wasSent
-          ? 'A confirmation email has been sent to your inbox.'
-          : 'Your request is recorded. Email delivery will activate after EmailJS is configured.';
+        const emailStatus = {
+          en: [ 'A confirmation email has been sent to your inbox.', 'Your request is recorded. Email delivery will activate after EmailJS is configured.' ],
+          pt: [ 'Um e-mail de confirmação foi enviado para sua caixa de entrada.', 'Sua solicitação foi registrada. O envio de e-mail será ativado após a configuração do EmailJS.' ],
+          es: [ 'Se ha enviado un correo de confirmación a su bandeja de entrada.', 'Su solicitud ha sido registrada. El envío de correos se activará después de configurar EmailJS.' ],
+          zh: [ '确认邮件已发送到您的收件箱。', '您的申请已记录。配置 EmailJS 后将启用邮件发送。' ],
+          'zh-TW': [ '確認郵件已寄送至您的收件匣。', '您的申請已記錄。設定 EmailJS 後將啟用郵件寄送。' ]
+        }[localStorage.getItem('siteLanguage') || 'en'];
+        document.getElementById('booking-email-status').textContent = emailStatus[wasSent ? 0 : 1];
       });
     });
 
