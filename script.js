@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTimeSlots();
 
     const updatePediatricFields = () => {
-      const isPediatric = specialtySelect.value === 'Pediatric Nutrition';
+      const isPediatric = ['Pediatric Consultation (children)', 'Pediatric Nutrition'].includes(specialtySelect.value);
       pediatricFields.hidden = !isPediatric;
       pediatricFields.querySelectorAll('input').forEach((input) => {
         input.required = isPediatric;
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderSummary = (data) => {
-      const summaryFields = data.specialty === 'Pediatric Nutrition'
+      const summaryFields = ['Pediatric Consultation (children)', 'Pediatric Nutrition'].includes(data.specialty)
         ? [...baseSummaryFields.slice(0, 7), ['Child age', 'childAge'], ['Parent/Guardian', 'guardianName'], ...baseSummaryFields.slice(7)]
         : baseSummaryFields;
       document.getElementById('booking-reference').textContent = data.bookingReference;
