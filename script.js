@@ -350,9 +350,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const adminBookingsBody = document.getElementById('admin-bookings-body');
   const adminEmpty = document.getElementById('admin-empty');
   const adminDetailModal = document.getElementById('admin-detail-modal');
+  const adminPasswordForm = document.getElementById('admin-password-form');
+  const adminPasswordError = document.getElementById('admin-password-error');
+  const adminPasswordStatus = document.getElementById('admin-password-status');
   let selectedBookingReference = null;
 
-  const adminAccessCode = 'BAL-ADMIN-2026';
+  const defaultAdminAccessCode = 'BAL-ADMIN-2026';
+  const getAdminAccessCode = () => localStorage.getItem('clinicalAdminPassword') || defaultAdminAccessCode;
   const getBookings = () => JSON.parse(localStorage.getItem('clinicalBookings') || '[]');
   const saveBookings = (records) => localStorage.setItem('clinicalBookings', JSON.stringify(records));
 
@@ -427,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
     adminLoginForm.addEventListener('submit', (event) => {
       event.preventDefault();
       const password = document.getElementById('admin-password').value;
-      if (password !== adminAccessCode) {
+      if (password !== getAdminAccessCode()) {
         adminLoginError.textContent = 'Incorrect admin password.';
         return;
       }
@@ -436,6 +440,40 @@ document.addEventListener('DOMContentLoaded', () => {
       adminDashboardView.hidden = false;
       adminLoginError.textContent = '';
       renderAdminBookings();
+    });
+    document.querySelectorAll('[data-password-toggle]').forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        const input = document.getElementById(toggle.dataset.passwordToggle);
+        const icon = toggle.querySelector('.material-symbols-outlined');
+        const isVisible = input.type === 'text';
+        input.type = isVisible ? 'password' : 'text';
+        toggle.setAttribute('aria-label', `${isVisible ? 'Show' : 'Hide'} ${input.id.replaceAll('-', ' ')}`);
+        toggle.title = isVisible ? 'Show password' : 'Hide password';
+        icon.textContent = isVisible ? 'visibility' : 'visibility_off';
+      });
+    });
+    adminPasswordForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      adminPasswordError.textContent = '';
+      adminPasswordStatus.textContent = '';
+      const currentPassword = document.getElementById('current-admin-password').value;
+      const newPassword = document.getElementById('new-admin-password').value;
+      const confirmedPassword = document.getElementById('confirm-admin-password').value;
+      if (currentPassword !== getAdminAccessCode()) {
+        adminPasswordError.textContent = 'Current password is incorrect.';
+        return;
+      }
+      if (newPassword.length < 8) {
+        adminPasswordError.textContent = 'New password must be at least 8 characters.';
+        return;
+      }
+      if (newPassword !== confirmedPassword) {
+        adminPasswordError.textContent = 'New passwords do not match.';
+        return;
+      }
+      localStorage.setItem('clinicalAdminPassword', newPassword);
+      adminPasswordForm.reset();
+      adminPasswordStatus.textContent = 'Admin password updated.';
     });
     document.getElementById('admin-logout').addEventListener('click', () => {
       sessionStorage.removeItem('clinicalAdminAuthenticated');

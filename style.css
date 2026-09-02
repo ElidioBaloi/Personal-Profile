@@ -820,6 +820,70 @@ body.booking-is-open {
   width: auto;
 }
 
+.password-field {
+  position: relative;
+  display: block;
+}
+
+.password-field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 3rem;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.35rem;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 0;
+  color: #bccbb9;
+  background: transparent;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.password-toggle:hover,
+.password-toggle:focus-visible {
+  color: #4be277;
+  outline: none;
+}
+
+.admin-password-panel {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.25rem;
+  border: 1px solid #3d4a3d;
+  border-radius: 0.25rem;
+  background: #1c1b1b;
+}
+
+.admin-password-panel h2 {
+  margin: 0.35rem 0 0;
+  color: #e5e2e1;
+  font-family: Geist, sans-serif;
+  font-size: 1.25rem;
+}
+
+.admin-password-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.admin-password-panel .booking-submit {
+  width: max-content;
+}
+
+.admin-password-status {
+  margin: 0;
+  color: #4be277;
+}
+
 .admin-toolbar {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(12rem, 1fr);
@@ -958,6 +1022,16 @@ body.booking-is-open {
 .admin-detail-actions .booking-submit,
 .admin-detail-actions .booking-secondary {
   width: 100%;
+}
+
+@media (max-width: 700px) {
+  .admin-password-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-password-panel .booking-submit {
+    width: 100%;
+  }
 }
 
 .admin-delete-button {

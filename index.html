@@ -371,7 +371,10 @@
           <form id="admin-login-form">
             <label class="booking-field">
               <span>Admin password</span>
-              <input id="admin-password" type="password" autocomplete="current-password" required />
+              <span class="password-field">
+                <input id="admin-password" type="password" autocomplete="current-password" required />
+                <button class="password-toggle" type="button" data-password-toggle="admin-password" aria-label="Show admin password" title="Show password"><span class="material-symbols-outlined" aria-hidden="true">visibility</span></button>
+              </span>
             </label>
             <p class="booking-error" id="admin-login-error" role="alert"></p>
             <button class="booking-submit" type="submit">Sign In</button>
@@ -386,6 +389,20 @@
             </div>
             <button class="booking-secondary" type="button" id="admin-logout">Sign Out</button>
           </header>
+          <form class="admin-password-panel" id="admin-password-form">
+            <div>
+              <div class="booking-eyebrow">Security</div>
+              <h2>Change admin password</h2>
+            </div>
+            <div class="admin-password-fields">
+              <label class="booking-field"><span>Current password</span><span class="password-field"><input id="current-admin-password" type="password" autocomplete="current-password" required /><button class="password-toggle" type="button" data-password-toggle="current-admin-password" aria-label="Show current password" title="Show password"><span class="material-symbols-outlined" aria-hidden="true">visibility</span></button></span></label>
+              <label class="booking-field"><span>New password</span><span class="password-field"><input id="new-admin-password" type="password" autocomplete="new-password" minlength="8" required /><button class="password-toggle" type="button" data-password-toggle="new-admin-password" aria-label="Show new password" title="Show password"><span class="material-symbols-outlined" aria-hidden="true">visibility</span></button></span></label>
+              <label class="booking-field"><span>Confirm new password</span><span class="password-field"><input id="confirm-admin-password" type="password" autocomplete="new-password" minlength="8" required /><button class="password-toggle" type="button" data-password-toggle="confirm-admin-password" aria-label="Show confirmed password" title="Show password"><span class="material-symbols-outlined" aria-hidden="true">visibility</span></button></span></label>
+            </div>
+            <p class="booking-error" id="admin-password-error" role="alert"></p>
+            <p class="admin-password-status" id="admin-password-status" role="status"></p>
+            <button class="booking-submit" type="submit">Update Password</button>
+          </form>
           <div class="admin-toolbar">
             <input id="admin-search" type="search" placeholder="Search patient or order number" aria-label="Search bookings" />
             <select id="admin-specialty-filter" aria-label="Filter by specialty">
