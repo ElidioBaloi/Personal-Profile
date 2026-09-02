@@ -27,6 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  translations['zh-TW'] = {
+    ...translations.zh,
+    'Accepting New Patients': '接受新患者', 'Expertise': '專業領域', 'Specialties': '服務項目', 'Clinical Tools': '臨床工具', 'Public Health': '公共衛生', 'Booking': '預約', 'Admin Portal': '管理入口', 'Bridging Clinical Science': '連結臨床科學', 'and Human Wellness.': '與人類健康。', 'Book Consultation': '預約諮詢', 'Specialized Protocols': '服務項目', 'Athletic Performance': '運動表現', 'Body Composition': '身體組成', 'Pediatric Nutrition': '兒童營養', 'Reproductive Health': '生殖健康', 'General Nutrition': '一般營養', 'Reason for consultation': '諮詢原因', 'Select a reason': '請選擇原因', 'Pediatric Consultation (children)': '兒童諮詢', 'Reproductive Health (pregnancy)': '生殖健康（孕期）', 'Full Name': '姓名', 'Email Address': '電子郵件', 'Phone Number': '電話', 'Age': '年齡', "Child's age": '孩子的年齡', 'Sex': '性別', 'Select an option': '請選擇', 'Occupation': '職業', 'Place of Residence': '居住地', 'Parent/Guardian Name': '父母或監護人姓名', 'Preferred date': '首選日期', 'Preferred time': '首選時間', 'Select a time': '請選擇時間', 'How would you like to meet?': '您希望如何進行諮詢？', 'Select how you would like to meet': '請選擇方式', 'Online appointment': '線上諮詢', 'In-person appointment': '現場諮詢', 'What would you like help with?': '您希望獲得哪方面的協助？', 'Optional': '選填', 'Request Consultation': '提交諮詢申請', 'You will receive a confirmation email with your booking reference.': '您將收到包含預約編號的確認郵件。', 'Consultation requested': '諮詢申請已提交', 'Keep this reference for your records.': '請保存此編號。', 'Print Receipt / Download PDF': '列印收據 / 下載 PDF', 'Make Another Request': '提交新的申請', 'Contact Us': '聯絡我們', 'Private access': '私人存取', 'Sign in to view and manage consultation requests.': '登入以查看及管理諮詢申請。', 'Admin password': '管理員密碼', 'Sign In': '登入', 'Forgot password?': '忘記密碼？', 'Private workspace': '私人工作區', 'Consultation Bookings': '諮詢預約', 'Sign Out': '登出', 'Change admin password': '更改管理員密碼', 'Security': '安全性', 'Current password': '目前密碼', 'New password': '新密碼', 'Confirm new password': '確認新密碼', 'Update Password': '更新密碼', 'Search patient or order number': '搜尋患者或訂單號碼', 'All specialties': '所有服務項目', 'No bookings found.': '找不到預約。'
+  };
+
+  sharedTranslations['zh-TW'] = {
+    ...sharedTranslations.zh,
+    'Nutritionist & Public Health Professional specializing in evidence-based dietary interventions, pediatric growth, and athletic performance optimization.': '營養師兼公共衛生專業人士，專注於實證飲食、兒童成長與運動表現。', 'Clinical intake': '諮詢資訊', 'Book a Consultation': '預約諮詢', 'Share a few details so the right consultation can be prepared for you.': '請提供一些資訊，以便為您準備合適的諮詢。', 'Request received': '申請已收到', 'Contact us': '聯絡我們', 'Friday from 15:00 through Saturday 19:00 is unavailable.': '週五 15:00 至週六 19:00 沒有可預約時段。', 'Athletic: Macro Periodization': '運動：訓練飲食計畫', 'Body Comp: Dual BMI & FFMI Calculator': '身體組成：體重與瘦體重計算器', 'Pediatric: Growth Z-Score Estimator': '兒科：兒童成長估算', 'Reproductive Health: Gestational Weight & PCOS Tool': '生殖健康：孕期與多囊卵巢工具', 'General: BMR & TDEE Estimator': '一般：能量需求估算', 'Macronutrient periodization and recovery nutrition for endurance and strength athletes.': '為訓練、恢復與運動表現提供飲食建議。', 'Structured, sustainable leaning phases for aesthetic professionals and models.': '提供平衡且可持續的身體組成管理方案。', 'Growth monitoring, micro-deficiency correction, and developmental dietary planning.': '兒童成長監測與飲食規劃。', 'Gestational nutrition, PCOS management, and fertility-focused dietary interventions.': '孕期營養與生殖健康飲食支持。', 'Booking details': '諮詢詳情', 'Update Status': '更新狀態', 'Save Status': '儲存狀態', 'Print Patient Receipt': '列印患者收據', 'Delete Entry': '刪除紀錄'
+  };
+
   const translatePage = (language) => {
     const dictionary = { ...(translations[language] || {}), ...(sharedTranslations[language] || {}) };
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -285,8 +295,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (window.translatePage) window.translatePage(localStorage.getItem('siteLanguage') || 'en');
       const language = localStorage.getItem('siteLanguage') || 'en';
       const ageText = isPediatric
-        ? { en: "Child's age", pt: 'Idade da criança', es: 'Edad del niño', zh: '孩子的年龄' }[language]
-        : { en: 'Age', pt: 'Idade', es: 'Edad', zh: '年龄' }[language];
+        ? { en: "Child's age", pt: 'Idade da criança', es: 'Edad del niño', zh: '孩子的年龄', 'zh-TW': '孩子的年齡' }[language]
+        : { en: 'Age', pt: 'Idade', es: 'Edad', zh: '年龄', 'zh-TW': '年齡' }[language];
       ageLabel.firstChild.textContent = `${ageText} `;
     };
 
