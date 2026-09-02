@@ -820,6 +820,56 @@ body.booking-is-open {
   width: auto;
 }
 
+.admin-text-button,
+.admin-password-toggle {
+  border: 0;
+  color: #4be277;
+  background: transparent;
+  font-family: Geist, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.admin-text-button {
+  display: block;
+  margin: 1rem auto 0;
+}
+
+.admin-text-button:hover,
+.admin-text-button:focus-visible,
+.admin-password-toggle:hover,
+.admin-password-toggle:focus-visible {
+  color: #6bff8f;
+  outline: 2px solid rgba(75, 226, 119, 0.25);
+  outline-offset: 0.2rem;
+}
+
+#admin-recovery-form h2 {
+  margin: 0.35rem 0 0;
+  color: #e5e2e1;
+  font-family: Geist, sans-serif;
+  font-size: 1.4rem;
+}
+
+#admin-recovery-form p:not(.booking-error):not(.admin-password-status) {
+  color: #bccbb9;
+}
+
+.admin-password-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+.admin-password-toggle .material-symbols-outlined {
+  font-size: 1rem;
+}
+
 .password-field {
   position: relative;
   display: block;

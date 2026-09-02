@@ -353,6 +353,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const adminPasswordForm = document.getElementById('admin-password-form');
   const adminPasswordError = document.getElementById('admin-password-error');
   const adminPasswordStatus = document.getElementById('admin-password-status');
+  const adminRecoveryForm = document.getElementById('admin-recovery-form');
+  const adminRecoveryError = document.getElementById('admin-recovery-error');
+  const adminRecoveryStatus = document.getElementById('admin-recovery-status');
   let selectedBookingReference = null;
 
   const defaultAdminAccessCode = 'BAL-ADMIN-2026';
@@ -440,6 +443,41 @@ document.addEventListener('DOMContentLoaded', () => {
       adminDashboardView.hidden = false;
       adminLoginError.textContent = '';
       renderAdminBookings();
+    });
+    document.getElementById('show-password-recovery').addEventListener('click', () => {
+      adminLoginForm.hidden = true;
+      adminRecoveryForm.hidden = false;
+      document.getElementById('admin-recovery-email').focus();
+    });
+    document.getElementById('hide-password-recovery').addEventListener('click', () => {
+      adminRecoveryForm.reset();
+      adminRecoveryError.textContent = '';
+      adminRecoveryStatus.textContent = '';
+      adminRecoveryForm.hidden = true;
+      adminLoginForm.hidden = false;
+      document.getElementById('admin-password').focus();
+    });
+    adminRecoveryForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      adminRecoveryError.textContent = '';
+      adminRecoveryStatus.textContent = '';
+      const recoveryEmail = document.getElementById('admin-recovery-email').value.trim().toLowerCase();
+      if (recoveryEmail !== bookingConfig.ownerEmail.toLowerCase()) {
+        adminRecoveryError.textContent = 'That email is not associated with the admin account.';
+        return;
+      }
+      const subject = encodeURIComponent('Admin password reset request');
+      const body = encodeURIComponent('Please help me reset the admin password for the booking portal.');
+      window.location.href = `mailto:${bookingConfig.ownerEmail}?subject=${subject}&body=${body}`;
+      adminRecoveryStatus.textContent = 'Your email app should open with the reset request ready to send.';
+    });
+    document.getElementById('show-password-change').addEventListener('click', (event) => {
+      const trigger = event.currentTarget;
+      const isOpen = !adminPasswordForm.hidden;
+      adminPasswordForm.hidden = isOpen;
+      trigger.setAttribute('aria-expanded', String(!isOpen));
+      trigger.querySelector('.material-symbols-outlined').textContent = isOpen ? 'expand_more' : 'expand_less';
+      if (!isOpen) document.getElementById('current-admin-password').focus();
     });
     document.querySelectorAll('[data-password-toggle]').forEach((toggle) => {
       toggle.addEventListener('click', () => {

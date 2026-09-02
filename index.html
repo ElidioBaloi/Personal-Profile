@@ -378,6 +378,20 @@
             </label>
             <p class="booking-error" id="admin-login-error" role="alert"></p>
             <button class="booking-submit" type="submit">Sign In</button>
+            <button class="admin-text-button" type="button" id="show-password-recovery">Forgot password?</button>
+          </form>
+          <form id="admin-recovery-form" hidden>
+            <div class="booking-eyebrow">Account recovery</div>
+            <h2>Request a password reset</h2>
+            <p>Enter the admin email address. Your email app will open a reset request addressed to the account owner.</p>
+            <label class="booking-field">
+              <span>Admin email</span>
+              <input id="admin-recovery-email" type="email" autocomplete="email" required />
+            </label>
+            <p class="booking-error" id="admin-recovery-error" role="alert"></p>
+            <p class="admin-password-status" id="admin-recovery-status" role="status"></p>
+            <button class="booking-submit" type="submit">Open Email Request</button>
+            <button class="admin-text-button" type="button" id="hide-password-recovery">Back to sign in</button>
           </form>
         </div>
 
@@ -389,7 +403,8 @@
             </div>
             <button class="booking-secondary" type="button" id="admin-logout">Sign Out</button>
           </header>
-          <form class="admin-password-panel" id="admin-password-form">
+          <button class="admin-password-toggle" type="button" id="show-password-change" aria-expanded="false" aria-controls="admin-password-form">Change admin password <span class="material-symbols-outlined" aria-hidden="true">expand_more</span></button>
+          <form class="admin-password-panel" id="admin-password-form" hidden>
             <div>
               <div class="booking-eyebrow">Security</div>
               <h2>Change admin password</h2>
