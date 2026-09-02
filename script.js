@@ -363,11 +363,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const sendConfirmationEmail = (data) => {
       if (!isEmailConfigured() || !window.emailjs) {
-        return Promise.resolve(false);
+        return Promise.resolve({ customerSent: false, adminSent: false, configured: false });
       }
       window.emailjs.init({ publicKey: bookingConfig.publicKey });
       const emailParams = {
         to_email: data.email,
+        email: data.email,
+        recipient_email: data.email,
+        reply_to: data.email,
         owner_email: bookingConfig.ownerEmail,
         patient_name: data.fullName,
         booking_reference: data.bookingReference,
@@ -382,14 +385,20 @@ document.addEventListener('DOMContentLoaded', () => {
         format: data.format,
         notes: data.notes || 'None provided',
       };
-      return Promise.all([
+      return Promise.allSettled([
         window.emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, emailParams),
         window.emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, {
           ...emailParams,
           to_email: bookingConfig.ownerEmail,
           notification_type: 'New consultation booking notification',
         }),
-      ]).then(() => true).catch(() => false);
+      ]).then(([customerResult, adminResult]) => ({
+        customerSent: customerResult.status === 'fulfilled',
+        adminSent: adminResult.status === 'fulfilled',
+        configured: true,
+        customerError: customerResult.status === 'rejected' ? customerResult.reason : null,
+        adminError: adminResult.status === 'rejected' ? adminResult.reason : null,
+      }));
     };
 
     const saveBookingRecord = (data) => {
@@ -426,17 +435,25 @@ document.addEventListener('DOMContentLoaded', () => {
       renderSummary(data);
       bookingFormView.hidden = true;
       bookingConfirmation.hidden = false;
-      sendConfirmationEmail(data).then((wasSent) => {
+      sendConfirmationEmail(data).then((emailResult) => {
         const emailStatus = {
-          en: [ 'A confirmation email has been sent to your inbox.', 'Your request is recorded, but the confirmation email could not be sent.', 'Your request is recorded. Automatic email is unavailable until EmailJS is configured.' ],
-          pt: [ 'Um e-mail de confirmação foi enviado para sua caixa de entrada.', 'Sua solicitação foi registrada, mas o e-mail de confirmação não pôde ser enviado.', 'Sua solicitação foi registrada. O envio automático de e-mail estará disponível após a configuração do EmailJS.' ],
-          es: [ 'Se ha enviado un correo de confirmación a su bandeja de entrada.', 'Su solicitud ha sido registrada, pero no se pudo enviar el correo de confirmación.', 'Su solicitud ha sido registrada. El envío automático estará disponible después de configurar EmailJS.' ],
-          zh: [ '确认邮件已发送到您的收件箱。', '您的申请已记录，但确认邮件无法发送。', '您的申请已记录。配置 EmailJS 后将启用自动邮件。' ],
-          'zh-TW': [ '確認郵件已寄送至您的收件匣。', '您的申請已記錄，但確認郵件無法寄送。', '您的申請已記錄。設定 EmailJS 後將啟用自動郵件。' ]
+          en: [ 'Confirmation email sent to the customer and admin notification sent.', 'Your request is recorded, but the confirmation email could not be sent.', 'Your request is recorded. Automatic email is unavailable until EmailJS is configured.', 'Confirmation email sent, but the admin notification could not be sent.', 'Your request is recorded, but neither email could be sent.' ],
+          pt: [ 'O e-mail de confirmação foi enviado ao cliente e a notificação foi enviada ao administrador.', 'Sua solicitação foi registrada, mas o e-mail de confirmação não pôde ser enviado.', 'Sua solicitação foi registrada. O envio automático estará disponível após a configuração do EmailJS.', 'O e-mail de confirmação foi enviado, mas a notificação ao administrador não pôde ser enviada.', 'Sua solicitação foi registrada, mas nenhum dos e-mails pôde ser enviado.' ],
+          es: [ 'Se envió el correo de confirmación al cliente y la notificación al administrador.', 'Su solicitud ha sido registrada, pero no se pudo enviar el correo de confirmación.', 'Su solicitud ha sido registrada. El envío automático estará disponible después de configurar EmailJS.', 'Se envió el correo de confirmación, pero no la notificación al administrador.', 'Su solicitud ha sido registrada, pero no se pudo enviar ningún correo.' ],
+          zh: [ '确认邮件已发送给客户，管理员通知也已发送。', '您的申请已记录，但确认邮件无法发送。', '您的申请已记录。配置 EmailJS 后将启用自动邮件。', '确认邮件已发送，但管理员通知无法发送。', '您的申请已记录，但两封邮件都无法发送。' ],
+          'zh-TW': [ '確認郵件已寄送給客戶，管理員通知也已寄送。', '您的申請已記錄，但確認郵件無法寄送。', '您的申請已記錄。設定 EmailJS 後將啟用自動郵件。', '確認郵件已寄送，但管理員通知無法寄送。', '您的申請已記錄，但兩封郵件都無法寄送。' ]
         }[localStorage.getItem('siteLanguage') || 'en'];
-        document.getElementById('booking-email-status').textContent = isEmailConfigured()
-          ? emailStatus[wasSent ? 0 : 1]
-          : emailStatus[2];
+        document.getElementById('booking-email-status').textContent = !emailResult.configured
+          ? emailStatus[2]
+          : emailResult.customerSent && emailResult.adminSent
+            ? emailStatus[0]
+            : emailResult.customerSent
+              ? emailStatus[3]
+              : emailResult.adminSent
+                ? emailStatus[1]
+                : emailStatus[4];
+              if (emailResult.customerError) console.error('Customer confirmation email failed:', emailResult.customerError);
+              if (emailResult.adminError) console.error('Admin notification email failed:', emailResult.adminError);
       });
     });
 
@@ -632,6 +649,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.getElementById('admin-search').addEventListener('input', renderAdminBookings);
     document.getElementById('admin-specialty-filter').addEventListener('change', renderAdminBookings);
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'clinicalBookings') renderAdminBookings();
+    });
+    window.addEventListener('focus', renderAdminBookings);
     adminDetailModal.querySelectorAll('[data-admin-detail-close]').forEach((control) => control.addEventListener('click', closeBookingDetails));
     document.getElementById('admin-update-status').addEventListener('click', () => {
       const records = getBookings();
