@@ -207,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const specialtySelect = document.getElementById('specialty');
   const pediatricFields = document.getElementById('pediatric-fields');
   const ageLabel = document.getElementById('age-label');
+  const occupationLabel = document.getElementById('occupation-label');
   const preferredDate = document.getElementById('preferred-date');
   const timeSlot = document.getElementById('time-slot');
   const timeSlotHint = document.getElementById('time-slot-hint');
@@ -298,6 +299,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ? { en: "Child's age", pt: 'Idade da criança', es: 'Edad del niño', zh: '孩子的年龄', 'zh-TW': '孩子的年齡' }[language]
         : { en: 'Age', pt: 'Idade', es: 'Edad', zh: '年龄', 'zh-TW': '年齡' }[language];
       ageLabel.firstChild.textContent = `${ageText} `;
+      const occupationText = isPediatric
+        ? { en: "Parent/Guardian's occupation", pt: 'Profissão do pai, mãe ou responsável', es: 'Profesión del padre, madre o tutor', zh: '父母或监护人的职业', 'zh-TW': '父母或監護人的職業' }[language]
+        : { en: 'Occupation', pt: 'Profissão', es: 'Profesión', zh: '职业', 'zh-TW': '職業' }[language];
+      occupationLabel.firstChild.textContent = `${occupationText} `;
     };
 
     specialtySelect.addEventListener('change', updatePediatricFields);
