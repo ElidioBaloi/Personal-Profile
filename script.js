@@ -212,9 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const timeSlot = document.getElementById('time-slot');
   const timeSlotHint = document.getElementById('time-slot-hint');
   const bookingConfig = {
-    publicKey: 'YOUR_EMAILJS_PUBLIC_KEY',
-    serviceId: 'YOUR_EMAILJS_SERVICE_ID',
-    templateId: 'YOUR_EMAILJS_TEMPLATE_ID',
+    publicKey: '2ZTPB8QU80bKUwh5M',
+    serviceId: 'service_ca5l2d8',
+    templateId: 'template_dd2cskj',
     ownerEmail: 'elidiobaloi@gmail.com',
   };
   const bookingStoreConfig = {
@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isEmailConfigured() || !window.emailjs) {
         return Promise.resolve(false);
       }
-      emailjs.init({ publicKey: bookingConfig.publicKey });
+      window.emailjs.init({ publicKey: bookingConfig.publicKey });
       const emailParams = {
         to_email: data.email,
         owner_email: bookingConfig.ownerEmail,
@@ -383,8 +383,8 @@ document.addEventListener('DOMContentLoaded', () => {
         notes: data.notes || 'None provided',
       };
       return Promise.all([
-        emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, emailParams),
-        emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, {
+        window.emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, emailParams),
+        window.emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, {
           ...emailParams,
           to_email: bookingConfig.ownerEmail,
           notification_type: 'New consultation booking notification',
