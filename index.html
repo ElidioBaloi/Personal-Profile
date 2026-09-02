@@ -92,6 +92,16 @@
         </div>
 
         <div class="flex items-center gap-xs">
+          <label class="language-picker" for="language-select">
+            <span class="material-symbols-outlined" aria-hidden="true">language</span>
+            <span class="sr-only">Website language</span>
+            <select id="language-select" aria-label="Website language">
+              <option value="en">English</option>
+              <option value="pt">Português</option>
+              <option value="es">Español</option>
+              <option value="zh">中文</option>
+            </select>
+          </label>
           <button class="p-2 hover:bg-surface-container-highest/50 transition-colors duration-200 rounded text-on-surface-variant mobile-menu-toggle" id="mobile-menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobile-menu">
             <span class="material-symbols-outlined">menu</span>
           </button>
@@ -262,11 +272,11 @@
                 <span>Reason for consultation <b>*</b></span>
                 <select name="specialty" id="specialty" required>
                   <option value="">Select a reason</option>
-                  <option>Pediatric Consultation (children)</option>
-                  <option>Reproductive Health (pregnancy)</option>
-                  <option>Athletic Performance</option>
-                  <option>Body Composition</option>
-                  <option>General Nutrition</option>
+                  <option value="Pediatric Consultation (children)">Pediatric Consultation (children)</option>
+                  <option value="Reproductive Health (pregnancy)">Reproductive Health (pregnancy)</option>
+                  <option value="Athletic Performance">Athletic Performance</option>
+                  <option value="Body Composition">Body Composition</option>
+                  <option value="General Nutrition">General Nutrition</option>
                 </select>
               </label>
               <label class="booking-field">
@@ -418,11 +428,11 @@
             <input id="admin-search" type="search" placeholder="Search patient or order number" aria-label="Search bookings" />
             <select id="admin-specialty-filter" aria-label="Filter by specialty">
               <option value="">All specialties</option>
-              <option>Athletic Performance</option>
-              <option>Body Composition</option>
-              <option>Pediatric Nutrition</option>
-              <option>Reproductive Health</option>
-              <option>General Nutrition</option>
+              <option value="Athletic Performance">Athletic Performance</option>
+              <option value="Body Composition">Body Composition</option>
+              <option value="Pediatric Consultation (children)">Pediatric Consultation (children)</option>
+              <option value="Reproductive Health (pregnancy)">Reproductive Health (pregnancy)</option>
+              <option value="General Nutrition">General Nutrition</option>
             </select>
           </div>
           <div class="admin-table-wrap">
