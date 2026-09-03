@@ -368,7 +368,10 @@ document.addEventListener('DOMContentLoaded', () => {
       window.emailjs.init({ publicKey: bookingConfig.publicKey });
       const emailParams = {
         to_email: data.email,
+        to_name: data.fullName,
         email: data.email,
+        user_email: data.email,
+        user_name: data.fullName,
         recipient_email: data.email,
         reply_to: data.email,
         owner_email: bookingConfig.ownerEmail,
@@ -385,20 +388,23 @@ document.addEventListener('DOMContentLoaded', () => {
         format: data.format,
         notes: data.notes || 'None provided',
       };
-      return Promise.allSettled([
-        window.emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, emailParams),
-        window.emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, {
-          ...emailParams,
-          to_email: bookingConfig.ownerEmail,
-          notification_type: 'New consultation booking notification',
-        }),
-      ]).then(([customerResult, adminResult]) => ({
-        customerSent: customerResult.status === 'fulfilled',
-        adminSent: adminResult.status === 'fulfilled',
+      const send = (params) => window.emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, params, bookingConfig.publicKey)
+        .then(() => ({ sent: true, error: null }))
+        .catch((error) => ({ sent: false, error }));
+      return send(emailParams).then((customerResult) => send({
+        ...emailParams,
+        to_email: bookingConfig.ownerEmail,
+        to_name: 'Elidio Baloi',
+        email: bookingConfig.ownerEmail,
+        recipient_email: bookingConfig.ownerEmail,
+        notification_type: 'New consultation booking notification',
+      }).then((adminResult) => ({
+        customerSent: customerResult.sent,
+        adminSent: adminResult.sent,
         configured: true,
-        customerError: customerResult.status === 'rejected' ? customerResult.reason : null,
-        adminError: adminResult.status === 'rejected' ? adminResult.reason : null,
-      }));
+        customerError: customerResult.error,
+        adminError: adminResult.error,
+      })));
     };
 
     const saveBookingRecord = (data) => {
