@@ -366,45 +366,41 @@ document.addEventListener('DOMContentLoaded', () => {
         return Promise.resolve({ customerSent: false, adminSent: false, configured: false });
       }
       window.emailjs.init({ publicKey: bookingConfig.publicKey });
-      const emailParams = {
+      const patientEmailPayload = {
         to_email: data.email,
-        to_name: data.fullName,
-        email: data.email,
-        user_email: data.email,
-        user_name: data.fullName,
-        recipient_email: data.email,
-        reply_to: data.email,
-        owner_email: bookingConfig.ownerEmail,
+        reply_to: bookingConfig.ownerEmail,
         patient_name: data.fullName,
-        booking_reference: data.bookingReference,
-        phone: data.phone,
+        order_number: data.bookingReference,
+        specialty_focus: data.specialty,
+        appointment_date: data.preferredDate,
+        appointment_time: data.timeSlot,
+        service_format: data.format,
+      };
+      const adminEmailPayload = {
+        to_email: bookingConfig.ownerEmail,
+        reply_to: data.email,
+        patient_name: data.fullName,
+        order_number: data.bookingReference,
+        specialty_focus: data.specialty,
+        appointment_date: data.preferredDate,
+        appointment_time: data.timeSlot,
+        service_format: data.format,
         age: data.age,
         sex: data.sex,
         occupation: data.occupation,
-        residence: data.residence,
-        specialty: data.specialty,
-        preferred_date: data.preferredDate,
-        time_slot: data.timeSlot,
-        format: data.format,
-        notes: data.notes || 'None provided',
+        clinical_notes: data.notes || 'None provided',
       };
-      const send = (params) => window.emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, params, bookingConfig.publicKey)
-        .then(() => ({ sent: true, error: null }))
-        .catch((error) => ({ sent: false, error }));
-      return send(emailParams).then((customerResult) => send({
-        ...emailParams,
-        to_email: bookingConfig.ownerEmail,
-        to_name: 'Elidio Baloi',
-        email: bookingConfig.ownerEmail,
-        recipient_email: bookingConfig.ownerEmail,
-        notification_type: 'New consultation booking notification',
-      }).then((adminResult) => ({
-        customerSent: customerResult.sent,
-        adminSent: adminResult.sent,
+      const send = (payload) => window.emailjs.send(bookingConfig.serviceId, bookingConfig.templateId, payload, bookingConfig.publicKey);
+      return Promise.allSettled([
+        send(patientEmailPayload),
+        send(adminEmailPayload),
+      ]).then(([customerResult, adminResult]) => ({
+        customerSent: customerResult.status === 'fulfilled',
+        adminSent: adminResult.status === 'fulfilled',
         configured: true,
-        customerError: customerResult.error,
-        adminError: adminResult.error,
-      })));
+        customerError: customerResult.status === 'rejected' ? customerResult.reason : null,
+        adminError: adminResult.status === 'rejected' ? adminResult.reason : null,
+      }));
     };
 
     const saveBookingRecord = (data) => {
