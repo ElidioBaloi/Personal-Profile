@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const timeSlotHint = document.getElementById('time-slot-hint');
   const bookingConfig = {
     publicKey: '2ZTPB8QU80bKUwh5M',
-    serviceId: 'service_ca5l2d8',
+    serviceId: 'service_2gqunre',
     templateId: 'template_dd2cskj',
     ownerEmail: 'elidiobaloi@gmail.com',
   };
