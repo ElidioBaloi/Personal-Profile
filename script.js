@@ -218,9 +218,43 @@ document.addEventListener('DOMContentLoaded', () => {
     ownerEmail: 'elidiobaloi@gmail.com',
   };
   const bookingStoreConfig = {
-    endpoint: '',
-    adminApiKey: '',
+    endpoint: 'https://dhqbsfqgfkhnwmfqqmdx.supabase.co',
+    anonKey: 'sb_publishable_5HvfqCyVeoi0orV7XEAiJA_My_E19ih',
   };
+
+  const isCloudStoreConfigured = () => Boolean(bookingStoreConfig.endpoint && bookingStoreConfig.anonKey);
+  const cloudHeaders = () => ({
+    apikey: bookingStoreConfig.anonKey,
+    Authorization: `Bearer ${bookingStoreConfig.anonKey}`,
+    'Content-Type': 'application/json',
+  });
+  const cloudBookingsUrl = () => `${bookingStoreConfig.endpoint}/rest/v1/bookings`;
+  const saveBookingToCloud = (data) => {
+    const { specialty, ...cloudData } = data;
+    return fetch(cloudBookingsUrl(), {
+    method: 'POST',
+    headers: { ...cloudHeaders(), Prefer: 'return=minimal' },
+    body: JSON.stringify({ ...cloudData, reasonForConsultation: data.reasonForConsultation || specialty }),
+    }).then((response) => {
+    if (!response.ok) throw new Error(`Supabase booking save failed (${response.status})`);
+    return data;
+    });
+  };
+  const loadBookingsFromCloud = () => fetch(`${cloudBookingsUrl()}?select=*&order=createdAt.desc`, {
+    headers: cloudHeaders(),
+  }).then((response) => {
+    if (!response.ok) throw new Error(`Supabase booking load failed (${response.status})`);
+    return response.json();
+  });
+  const updateBookingInCloud = (reference, payload) => fetch(`${cloudBookingsUrl()}?bookingReference=eq.${encodeURIComponent(reference)}`, {
+    method: 'PATCH',
+    headers: { ...cloudHeaders(), Prefer: 'return=minimal' },
+    body: JSON.stringify(payload),
+  });
+  const deleteBookingFromCloud = (reference) => fetch(`${cloudBookingsUrl()}?bookingReference=eq.${encodeURIComponent(reference)}`, {
+    method: 'DELETE',
+    headers: cloudHeaders(),
+  });
 
   const isEmailConfigured = () => Object.values(bookingConfig).every((value) => !value.startsWith('YOUR_'));
 
@@ -371,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reply_to: bookingConfig.ownerEmail,
         patient_name: data.fullName,
         order_number: data.bookingReference,
-        specialty_focus: data.specialty,
+        specialty_focus: data.reasonForConsultation || data.specialty,
         appointment_date: data.preferredDate,
         appointment_time: data.timeSlot,
         service_format: data.format,
@@ -381,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reply_to: data.email,
         patient_name: data.fullName,
         order_number: data.bookingReference,
-        specialty_focus: data.specialty,
+        specialty_focus: data.reasonForConsultation || data.specialty,
         appointment_date: data.preferredDate,
         appointment_time: data.timeSlot,
         service_format: data.format,
@@ -407,14 +441,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const records = JSON.parse(localStorage.getItem('clinicalBookings') || '[]');
       records.unshift(data);
       localStorage.setItem('clinicalBookings', JSON.stringify(records));
-      if (bookingStoreConfig.endpoint && bookingStoreConfig.adminApiKey) {
-        fetch(bookingStoreConfig.endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Admin-Key': bookingStoreConfig.adminApiKey },
-          body: JSON.stringify(data),
-        }).catch(() => undefined);
-      }
-      return data;
+      window.dispatchEvent(new CustomEvent('clinical-booking-created', { detail: data }));
+      return isCloudStoreConfigured()
+        ? saveBookingToCloud(data).catch((error) => { console.error(error); return data; })
+        : Promise.resolve(data);
     };
 
     bookingForm.addEventListener('submit', (event) => {
@@ -433,6 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const data = getFormData();
+      data.reasonForConsultation = data.specialty;
       saveBookingRecord(data);
       renderSummary(data);
       bookingFormView.hidden = true;
@@ -494,14 +525,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const getAdminAccessCode = () => localStorage.getItem('clinicalAdminPassword') || defaultAdminAccessCode;
   const getBookings = () => JSON.parse(localStorage.getItem('clinicalBookings') || '[]');
   const saveBookings = (records) => localStorage.setItem('clinicalBookings', JSON.stringify(records));
+  let adminBookings = getBookings();
 
   if (adminPortal) {
-    const renderAdminBookings = () => {
+    const renderAdminBookings = async () => {
+      if (isCloudStoreConfigured()) {
+        try {
+          adminBookings = await loadBookingsFromCloud();
+          saveBookings(adminBookings);
+        } catch (error) {
+          console.error(error);
+          adminBookings = getBookings();
+        }
+      } else {
+        adminBookings = getBookings();
+      }
       const search = document.getElementById('admin-search').value.toLowerCase();
       const specialty = document.getElementById('admin-specialty-filter').value;
-      const records = getBookings().filter((booking) => {
+      const records = adminBookings.filter((booking) => {
+        const reason = booking.reasonForConsultation || booking.specialty;
         const matchesSearch = !search || `${booking.bookingReference} ${booking.fullName}`.toLowerCase().includes(search);
-        return matchesSearch && (!specialty || booking.specialty === specialty);
+        return matchesSearch && (!specialty || reason === specialty);
       });
       adminBookingsBody.replaceChildren();
       adminEmpty.hidden = records.length > 0;
@@ -509,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const row = document.createElement('tr');
         row.tabIndex = 0;
         row.dataset.reference = booking.bookingReference;
-        [booking.bookingReference, booking.fullName, booking.age, booking.sex, booking.occupation, booking.specialty, `${booking.preferredDate} ${booking.timeSlot}`, booking.format, booking.status || 'Pending'].forEach((value, index) => {
+        [booking.bookingReference, booking.fullName, booking.age, booking.sex, booking.occupation, booking.reasonForConsultation || booking.specialty, `${booking.preferredDate} ${booking.timeSlot}`, booking.format, booking.status || 'Pending'].forEach((value, index) => {
           const cell = document.createElement('td');
           cell.textContent = value || 'Not provided';
           if (index === 8) cell.className = `status-tag status-${String(value || 'Pending').toLowerCase()}`;
@@ -522,16 +566,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const openBookingDetails = (reference) => {
-      const booking = getBookings().find((item) => item.bookingReference === reference);
+      const booking = adminBookings.find((item) => item.bookingReference === reference);
       if (!booking) return;
       selectedBookingReference = reference;
       document.getElementById('admin-detail-title').textContent = reference;
       document.getElementById('admin-status-select').value = booking.status || 'Pending';
-      const detailFields = [['Full Name', 'fullName'], ['Email', 'email'], ['Phone', 'phone'], ['Age', 'age'], ['Sex', 'sex'], ['Occupation', 'occupation'], ['Residence', 'residence'], ['Specialty', 'specialty'], ['Date & Time', 'dateTime'], ['Format', 'format'], ['Parent/Guardian', 'guardianName'], ['Clinical Notes', 'notes']];
+      const detailFields = [['Full Name', 'fullName'], ['Email', 'email'], ['Phone', 'phone'], ['Age', 'age'], ['Sex', 'sex'], ['Occupation', 'occupation'], ['Residence', 'residence'], ['Reason for Consultation', 'reasonForConsultation'], ['Date & Time', 'dateTime'], ['Format', 'format'], ['Parent/Guardian', 'guardianName'], ['Clinical Notes', 'notes']];
       const detailList = document.getElementById('admin-detail-list');
       detailList.replaceChildren();
       detailFields.forEach(([label, key]) => {
-        const value = key === 'dateTime' ? `${booking.preferredDate} ${booking.timeSlot}` : booking[key];
+        const value = key === 'dateTime' ? `${booking.preferredDate} ${booking.timeSlot}` : key === 'reasonForConsultation' ? (booking.reasonForConsultation || booking.specialty) : booking[key];
         if (!value) return;
         const wrapper = document.createElement('div');
         const term = document.createElement('dt');
@@ -655,19 +699,29 @@ document.addEventListener('DOMContentLoaded', () => {
       if (event.key === 'clinicalBookings') renderAdminBookings();
     });
     window.addEventListener('focus', renderAdminBookings);
+    window.addEventListener('pageshow', renderAdminBookings);
+    window.addEventListener('clinical-booking-created', renderAdminBookings);
+    window.setInterval(() => {
+      if (window.location.hash.toLowerCase() === '#admin' && !adminDashboardView.hidden) {
+        renderAdminBookings();
+      }
+    }, 2000);
     adminDetailModal.querySelectorAll('[data-admin-detail-close]').forEach((control) => control.addEventListener('click', closeBookingDetails));
     document.getElementById('admin-update-status').addEventListener('click', () => {
-      const records = getBookings();
+      const records = adminBookings;
       const booking = records.find((item) => item.bookingReference === selectedBookingReference);
       if (!booking) return;
       booking.status = document.getElementById('admin-status-select').value;
       saveBookings(records);
+      if (isCloudStoreConfigured()) updateBookingInCloud(selectedBookingReference, { status: booking.status }).catch(console.error);
       closeBookingDetails();
       renderAdminBookings();
     });
     document.getElementById('admin-delete-booking').addEventListener('click', () => {
       if (!selectedBookingReference || !window.confirm('Delete this booking permanently?')) return;
-      saveBookings(getBookings().filter((item) => item.bookingReference !== selectedBookingReference));
+      const reference = selectedBookingReference;
+      saveBookings(adminBookings.filter((item) => item.bookingReference !== reference));
+      if (isCloudStoreConfigured()) deleteBookingFromCloud(reference).catch(console.error);
       closeBookingDetails();
       renderAdminBookings();
     });
